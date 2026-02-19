@@ -1,8 +1,6 @@
 [submodule "vendor/VirtualShell"]
 	path = vendor/VirtualShell
 	url = https://github.com/TheRouletteBoi/VirtualShell.git
-
 [submodule "vendor/scetool"]
 	path = vendor/scetool
 	url = https://github.com/naehrwert/scetool.git
-	
