@@ -42,7 +42,19 @@ struct exportStub_s
 };
 
 uint32_t GetCurrentToc();
+
+/** Writes memory to a process.
+ * @param data The data that you want to write.
+ * @param size How many bytes you want to write, ideally should be sizeof(data).
+ * @return Status code.
+ */
 int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t size);
+
+/** Reads a process' memory.
+ * @param data The object which you want the data that gets read to be stored in.
+ * @param size should be sizeof(data), how many bytes you want to read.
+ * @return Status code.
+ */
 int ReadProcessMemory(uint32_t pid, void* address, void* data, size_t size);
 
 template<typename T>

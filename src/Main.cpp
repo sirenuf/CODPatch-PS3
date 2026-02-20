@@ -1,5 +1,3 @@
-
-
 #include <cellstatus.h>
 #include <sys/prx.h>
 

@@ -77,6 +77,7 @@ scetool\scetool -0 SELF -1 TRUE -s FALSE -2 0A -3 1070000052000001 -4 01000002 -
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\StartHandler.cpp" />
+    <ClCompile Include="Games\CODCommon.cpp" />
     <ClCompile Include="Games\FindActiveGame.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Memory\Memory.cpp" />
@@ -85,6 +86,7 @@ scetool\scetool -0 SELF -1 TRUE -s FALSE -2 0A -3 1070000052000001 -4 01000002 -
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\StartHandler.hpp" />
+    <ClInclude Include="Games\CODCommon.hpp" />
     <ClInclude Include="Games\CODMW2.hpp" />
     <ClInclude Include="Games\FindActiveGame.hpp" />
     <ClInclude Include="Memory\Memory.hpp" />
