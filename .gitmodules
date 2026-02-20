@@ -4,3 +4,4 @@
 [submodule "vendor/scetool"]
 	path = vendor/scetool
 	url = https://github.com/naehrwert/scetool.git
+	ignore = all
