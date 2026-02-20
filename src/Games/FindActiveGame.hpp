@@ -17,7 +17,17 @@ public:
     void Initialize();
     void Shutdown();
     uint32_t GetRunningGameProcessId();
+
+    /* Gets the PS3 GameID and official game name */
     void GetGameName(std::string& outTitleId, std::string& outTitleName);
+    
+    /** Gets the name of the currently running SELF binary associated with the game
+     * 
+     * NOTE: file extension is truncated to .se instead of .self 
+     * 
+     * Example output: <pid>_default_mp.se
+     */
+    void GetGameBinaryName(std::string& binaryName);
 
 private:
     void SetRunningGameProcessId(uint32_t pid);

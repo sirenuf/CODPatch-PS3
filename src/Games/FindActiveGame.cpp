@@ -1,5 +1,7 @@
 #include "FindActiveGame.hpp"
 #include "CODMW2.hpp"
+#include "Utils/SystemCalls.hpp"
+
 #include <libpsutil.h>
 
 FindActiveGame g_FindActiveGame;
@@ -39,7 +41,7 @@ void FindActiveGame::SetRunningGameProcessId(uint32_t pid)
     m_CurrentGamePid = pid;
 }
 
-void FindActiveGame::GetGameName(std::string& outTitleId, std::string& outTitleName)//char outTitleId[16], char outTitleName[64])
+void FindActiveGame::GetGameName(std::string& outTitleId, std::string& outTitleName)
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
@@ -53,9 +55,17 @@ void FindActiveGame::GetGameName(std::string& outTitleId, std::string& outTitleN
     gameInterface->GameInfo(info);
     outTitleId = info.titleid;
     outTitleName = info.titlename;
-    
-    //vsh::snprintf(outTitleId, 10, "%s", _gameInfo + 0x04);
-    //vsh::snprintf(outTitleName, 63, "%s", _gameInfo + 0x14);
+}
+
+void FindActiveGame::GetGameBinaryName(std::string& binaryName)
+{
+    if (m_CurrentGamePid == 0)
+        return;
+
+    char buffer[256]{};
+    ps3mapi_get_process_name_by_pid(m_CurrentGamePid, buffer);
+
+    binaryName = buffer;
 }
 
 bool FindActiveGame::IsGameCodMW2(const std::string& titleId)
@@ -64,22 +74,29 @@ bool FindActiveGame::IsGameCodMW2(const std::string& titleId)
         || titleId == "BLES00683" || titleId == "BLES00691" || titleId == "BLES00690" || titleId == "BLES00686"
         || titleId == "BLES00685" || titleId == "BLES00684" || titleId == "BLES00687" || titleId == "NPEB00731"
         || titleId == "BLJM61006" || titleId == "BLJM60191")
-        return true;
+    {
+        std::string binaryName;
+        GetGameBinaryName(binaryName);
+
+        // Makes sure that multiplayer has been launched.
+        if (libpsutil::string::ends_with(binaryName, "default_mp.se"))
+            return true;
+    }
 
     return false;
 }
 
 void FindActiveGame::WhileInGame(uint32_t pid, std::string titleId, std::string titleName)
 {
+    // If game is already initialised return.
+    if (m_HasGameInitialized)
+        return;
+
     if (IsGameCodMW2(titleId))
     {
-        if (!m_HasGameInitialized)
-        {
-            CODMW2::Initialize();
-            m_HasGameInitialized = true;
-        }
+        CODMW2::Initialize();
+        m_HasGameInitialized = true;
     }
-
 }
 
 void FindActiveGame::GameProcessThread(uint64_t arg)
@@ -92,11 +109,7 @@ void FindActiveGame::GameProcessThread(uint64_t arg)
 
         if (gameProcessID != 0)
         {
-            for (int x = 0; x < (10 * 100); x++) // 10 second delay
-            {
-                sys_timer_usleep(10000);
-                sys_ppu_thread_yield();
-            }
+            libpsutil::sleep(10000);
 
             g_FindActiveGame.SetRunningGameProcessId(gameProcessID);
             if (g_FindActiveGame.GetRunningGameProcessId())
@@ -117,6 +130,7 @@ void FindActiveGame::GameProcessThread(uint64_t arg)
             }
         }
 
+        // Not sure if I still need this. Plugin is not meant to be unloaded in actuality though.
         // Good Bye CPU! Smallest sleep because we need to execute the patches as fast as possible 
         sys_timer_usleep(1668);
         sys_ppu_thread_yield();
