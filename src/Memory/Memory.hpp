@@ -4,44 +4,45 @@
 #include <ppu_asm_intrinsics.h> // __ALWAYS_INLINE
 #include <sys/process.h>
 #include "Utils/SystemCalls.hpp"
+#include "Utils/Types.hpp"
 
 struct opd_s
 {
-	uint32_t func;
-	uint32_t toc;
+	u32 func;
+	u32 toc;
 };
 
 struct importStub_s
 {
-	int16_t ssize;
-	int16_t header1;
-	int16_t header2;
-	int16_t imports;
-	int32_t zero1;
-	int32_t zero2;
+	i16 ssize;
+	i16 header1;
+	i16 header2;
+	i16 imports;
+	i32 zero1;
+	i32 zero2;
 	const char* name;
-	uint32_t* fnid;
+	u32* fnid;
 	opd_s** stub;
-	int32_t zero3;
-	int32_t zero4;
-	int32_t zero5;
-	int32_t zero6;
+	i32 zero3;
+	i32 zero4;
+	i32 zero5;
+	i32 zero6;
 };
 
 struct exportStub_s
 {
-	int16_t ssize;
-	int16_t header1;
-	int16_t header2;
-	int16_t exports; // number of exports
-	int32_t zero1;
-	int32_t zero2;
+	i16 ssize;
+	i16 header1;
+	i16 header2;
+	i16 exports; // number of exports
+	i32 zero1;
+	i32 zero2;
 	const char* name;
-	uint32_t* fnid;
+	u32* fnid;
 	opd_s** stub;
 };
 
-uint32_t GetCurrentToc();
+u32 GetCurrentToc();
 
 /** Writes memory to a process.
  * @param pid Process ID of the process you want to poke in.
@@ -50,7 +51,7 @@ uint32_t GetCurrentToc();
  * @param size How many bytes you want to write, ideally should be sizeof(data).
  * @return Status code.
  */
-int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t size);
+int WriteProcessMemory(u32 pid, void* address, const void* data, size_t size);
 
 /** Reads a process' memory.
  * @param pid Process ID of the process you want to peek in.
@@ -59,10 +60,10 @@ int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t siz
  * @param size How many bytes you want to read. E.g. sizeof(data)
  * @return Status code.
  */
-int ReadProcessMemory(uint32_t pid, void* address, void* data, size_t size);
+int ReadProcessMemory(u32 pid, void* address, void* data, size_t size);
 
 template<typename T>
-inline T VshGetMem(uint32_t address)
+inline T VshGetMem(u32 address)
 {
 	T data;
 	ReadProcessMemory(sys_process_getpid(), (void*)address, &data, sizeof(T));
@@ -70,13 +71,13 @@ inline T VshGetMem(uint32_t address)
 }
 
 template<typename T>
-inline void VshSetMem(uint32_t address, T data)
+inline void VshSetMem(u32 address, T data)
 {
 	WriteProcessMemory(sys_process_getpid(), (void*)address, &data, sizeof(T));
 }
 
 template <typename R, typename... Args>
-__ALWAYS_INLINE R CallByAddr(uint32_t addr, Args... args)
+__ALWAYS_INLINE R CallByAddr(u32 addr, Args... args)
 {
 	volatile opd_s opd = { addr, GetCurrentToc() };
 	R(*fn)(Args...) = (R(*)(Args...)) & opd;
@@ -95,7 +96,7 @@ __ALWAYS_INLINE R CallByOpd(opd_s opd, Args... args)
 }
 
 template<typename R, typename... Args>
-__ALWAYS_INLINE R CallVmtMethodByClassAddr(uint32_t addr, int index, Args... args)
+__ALWAYS_INLINE R CallVmtMethodByClassAddr(u32 addr, int index, Args... args)
 {
 	opd_s** opd = reinterpret_cast<opd_s**>(addr);
 	R(*fn)(Args...) = (R(*)(Args...))opd[index];

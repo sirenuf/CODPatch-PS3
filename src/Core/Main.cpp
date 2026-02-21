@@ -3,6 +3,7 @@
 
 #include <vsh/newDelete.hpp>
 
+#include "Utils/Types.hpp"
 #include "Utils/SystemCalls.hpp"
 #include "Core/StartHandler.hpp"
 
