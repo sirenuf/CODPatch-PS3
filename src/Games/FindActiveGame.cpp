@@ -25,7 +25,7 @@ void FindActiveGame::Shutdown()
         // Prevent unload too fast (give time to other threads to finish)
         sys_ppu_thread_yield();
         sys_timer_sleep(1);
-        uint64_t exitCode;
+        u64 exitCode;
         sys_ppu_thread_join(m_GameProcessPpuThreadId, &exitCode);
     }
 }
@@ -39,12 +39,12 @@ bool FindActiveGame::IsStillActive()
     return (m_HasGameInitialized && vsh::GetGameProcessId() == GetRunningGameProcessId());
 }
 
-uint32_t FindActiveGame::GetRunningGameProcessId()
+u32 FindActiveGame::GetRunningGameProcessId()
 {
     return m_CurrentGamePid;
 }
 
-void FindActiveGame::SetRunningGameProcessId(uint32_t pid)
+void FindActiveGame::SetRunningGameProcessId(u32 pid)
 {
     m_CurrentGamePid = pid;
 }
@@ -94,7 +94,7 @@ bool FindActiveGame::IsGameCodMW2(const std::string& titleId)
     return false;
 }
 
-void FindActiveGame::WhileInGame(uint32_t pid, std::string titleId, std::string titleName)
+void FindActiveGame::WhileInGame(u32 pid, std::string titleId, std::string titleName)
 {
     // If game is already initialised return.
     if (m_HasGameInitialized)
@@ -107,10 +107,10 @@ void FindActiveGame::WhileInGame(uint32_t pid, std::string titleId, std::string 
     }
 }
 
-void FindActiveGame::GameProcessThread(uint64_t arg)
+void FindActiveGame::GameProcessThread(u64 arg)
 {
     g_FindActiveGame.m_GameProcessThreadRunning = true;
-    uint32_t gameProcessID = 0;
+    u32 gameProcessID = 0;
     while (g_FindActiveGame.m_GameProcessThreadRunning)
     {
         gameProcessID = vsh::GetGameProcessId();

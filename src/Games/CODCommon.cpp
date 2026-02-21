@@ -11,11 +11,6 @@ namespace CODCommon
 {
 	extern const char* CODTypeS[] = { "mw2" };
 
-	/**
-	 * Verifies that the right folders and files exist.
-	 * @return
-	 * Boolean determines if file exists or not.
-	 */
 	bool VerifyFilesystem(CODType gameType)
 	{
 		libpsutil::filesystem::create_directory("/dev_hdd0/tmp/CODPatch");
@@ -31,12 +26,6 @@ namespace CODCommon
 		return storageFileExists;
 	}
 
-
-	/**
-	 * Loads saved stats on filesystem.
-	 * Intended to be ran on startup only.
-	 * @return
-	 */
 	void LoadSavedStats(CODType gameType)
 	{
 		// where the fuck is this overload: https://github.com/skiff/libpsutil/blob/master/libpsutil/system/filesystem.cpp#L28

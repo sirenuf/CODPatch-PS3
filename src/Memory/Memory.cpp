@@ -1,12 +1,12 @@
 #include "Memory.hpp"
 
-uint32_t GetCurrentToc()
+u32 GetCurrentToc()
 {
-    uint32_t* entry_point = *reinterpret_cast<uint32_t**>(0x1001C); // ElfHeader->e_entry 
+    u32* entry_point = *reinterpret_cast<uint32_t**>(0x1001C); // ElfHeader->e_entry 
     return entry_point[1];
 }
 
-int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t size)
+int WriteProcessMemory(u32 pid, void* address, const void* data, size_t size)
 {
     // We don't need this, at least not now
     /*
@@ -26,7 +26,7 @@ int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t siz
     return PS3MAPISetMemory(pid, address, data, size);
 }
 
-int ReadProcessMemory(uint32_t pid, void* address, void* data, size_t size)
+int ReadProcessMemory(u32 pid, void* address, void* data, size_t size)
 {
     // We don't need this, at least not now
     /*
