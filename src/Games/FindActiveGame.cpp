@@ -25,10 +25,18 @@ void FindActiveGame::Shutdown()
         // Prevent unload too fast (give time to other threads to finish)
         sys_ppu_thread_yield();
         sys_timer_sleep(1);
-
         uint64_t exitCode;
         sys_ppu_thread_join(m_GameProcessPpuThreadId, &exitCode);
     }
+}
+
+// this function feels clutterred now because
+// I feel like it is detatched from the loop.
+// TODO: Come back later
+bool FindActiveGame::IsStillActive()
+{
+    // If PID is not the same, game has exited. 
+    return (m_HasGameInitialized && vsh::GetGameProcessId() == GetRunningGameProcessId());
 }
 
 uint32_t FindActiveGame::GetRunningGameProcessId()
@@ -94,8 +102,8 @@ void FindActiveGame::WhileInGame(uint32_t pid, std::string titleId, std::string 
 
     if (IsGameCodMW2(titleId))
     {
-        CODMW2::Initialize();
         m_HasGameInitialized = true;
+        CODMW2::Initialize();
     }
 }
 
@@ -109,7 +117,7 @@ void FindActiveGame::GameProcessThread(uint64_t arg)
 
         if (gameProcessID != 0)
         {
-            libpsutil::sleep(10000);
+            libpsutil::sleep(1000);
 
             g_FindActiveGame.SetRunningGameProcessId(gameProcessID);
             if (g_FindActiveGame.GetRunningGameProcessId())

@@ -28,6 +28,13 @@ public:
      * Example output: <pid>_default_mp.se
      */
     void GetGameBinaryName(std::string& binaryName);
+    
+    /**
+     * @return
+     * Boolean that determines if plugin has been unloaded or game has been exited.
+     * Useful in while loops to make sure that it stops executing after game is closed or plugin is unloaded. 
+     */
+    bool IsStillActive();
 
 private:
     void SetRunningGameProcessId(uint32_t pid);
