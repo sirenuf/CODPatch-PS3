@@ -44,15 +44,19 @@ struct exportStub_s
 uint32_t GetCurrentToc();
 
 /** Writes memory to a process.
- * @param data The data that you want to write.
+ * @param pid Process ID of the process you want to poke in.
+ * @param address The memory offset.
+ * @param data The data that you want to write. May be a sequence of bytes in an array.
  * @param size How many bytes you want to write, ideally should be sizeof(data).
  * @return Status code.
  */
 int WriteProcessMemory(uint32_t pid, void* address, const void* data, size_t size);
 
 /** Reads a process' memory.
- * @param data The object which you want the data that gets read to be stored in.
- * @param size should be sizeof(data), how many bytes you want to read.
+ * @param pid Process ID of the process you want to peek in.
+ * @param address The memory offset.
+ * @param data The object which you want the data that gets read to be stored in. E.g. uint8_t* data
+ * @param size How many bytes you want to read. E.g. sizeof(data)
  * @return Status code.
  */
 int ReadProcessMemory(uint32_t pid, void* address, void* data, size_t size);
