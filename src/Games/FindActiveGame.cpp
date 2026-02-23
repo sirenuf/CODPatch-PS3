@@ -1,6 +1,6 @@
 #include "FindActiveGame.hpp"
-#include "CODMW2.hpp"
 #include "Utils/SystemCalls.hpp"
+#include "Games/COD/MW2.hpp"
 
 #include <libpsutil.h>
 
@@ -33,10 +33,11 @@ void FindActiveGame::Shutdown()
 // this function feels clutterred now because
 // I feel like it is detatched from the loop.
 // TODO: Come back later
+// I think HasGameInitialized variable is completely unncessary and does nothing.
 bool FindActiveGame::IsStillActive()
 {
     // If PID is not the same, game has exited. 
-    return (m_HasGameInitialized && vsh::GetGameProcessId() == GetRunningGameProcessId());
+    return (m_HasGameInitialized && m_GameProcessThreadRunning && vsh::GetGameProcessId() == GetRunningGameProcessId());
 }
 
 u32 FindActiveGame::GetRunningGameProcessId()
@@ -103,7 +104,7 @@ void FindActiveGame::WhileInGame(u32 pid, std::string titleId, std::string title
     if (IsGameCodMW2(titleId))
     {
         m_HasGameInitialized = true;
-        CODMW2::Initialize();
+        MW2::Initialize();
     }
 }
 

@@ -1,91 +1,68 @@
-#include "CODCommon.hpp"
+﻿#include "CODCommon.hpp"
 
 #include <vsh/vshtask.hpp>
 #include <vsh/stdc.hpp>
 #include <libpsutil.h>
+#include <algorithm>
 
 #include "Memory/Memory.hpp"
 #include "Games/FindActiveGame.hpp"
+#include "Games/COD/MW2.hpp"
+
+#include "Utils/StringFunctions.hpp"
 
 namespace CODCommon
 {
-	extern const char* CODTypeS[] = { "mw2" };
+	using namespace libpsutil::filesystem;
+	using namespace StringFunctions;
+	
+	const char* CODTypeS[] = { "mw2" };
+	
+	
+	std::string GetRootDir()
+	{
+		return "/dev_hdd0/tmp/CODPatch/";
+	}
+
+	
+	std::string GetDataFilePath(CODType gameType)
+	{
+		return GetRootDir() + CODTypeS[gameType] + "/data";
+	}
+
 
 	bool VerifyFilesystem(CODType gameType)
 	{
-		libpsutil::filesystem::create_directory("/dev_hdd0/tmp/CODPatch");
-		libpsutil::filesystem::create_directory(std::string("/dev_hdd0/tmp/CODPatch/") + CODTypeS[gameType]);
+
+		std::string DataPath = GetDataFilePath(gameType);
+
+		create_directory(GetRootDir());
+		create_directory(GetRootDir() + CODTypeS[gameType]);
 
 		bool storageFileExists;
+		storageFileExists = file_exists(DataPath);
 
-		storageFileExists = libpsutil::filesystem::file_exists(std::string("/dev_hdd0/tmp/CODPatch/") + CODTypeS[gameType] + std::string("/data"));
-		if (!storageFileExists) {
-			libpsutil::filesystem::write_file(std::string("/dev_hdd0/tmp/CODPatch/") + CODTypeS[gameType] + std::string("/data"), "");
+		// Make sure to remove CRs incase file has been edited on Windows!
+		if (storageFileExists)
+		{
+			std::string s = read_file(DataPath);
+
+			// Bug in libpsutil? Remove extra null-terminator.
+			// https://github.com/skiff/libpsutil/blob/0d55e10604cd26b18580454e3d7d6f94b0e87dda/libpsutil/system/filesystem.cpp#L37
+			s.resize(s.size() - 1);
+
+			s.erase(std::remove(s.begin(), s.end(), '\r'), s.end());
+
+			write_file(DataPath, s);
+		}
+		else
+		{
+			write_file(DataPath, "");
 		}
 
 		return storageFileExists;
 	}
 
-	void LoadSavedStats(CODType gameType)
-	{
-		// where the fuck is this overload: https://github.com/skiff/libpsutil/blob/master/libpsutil/system/filesystem.cpp#L28
-		// Fixed: https://github.com/skiff/libpsutil/pull/7
-		std::string input = libpsutil::filesystem::read_file(std::string("/dev_hdd0/tmp/CODPatch/") + CODTypeS[gameType]  + std::string("/data"));
-
-		const char* pos = input.c_str();
-
-		// This is really autistic
-		// the stdc++ lib is barely functional.
-		// Do 1. and 2. until it reaches EOF.
-
-		while (*pos != '\0')
-		{
-			// 1. Store the 1st line (address) as a size_t
-			// pos is pointing to the beginning of the first line rn.
-			// strchr with \n finds the first occurrence of \n infront of the cursor (pos)
-			const char* lineEnd = vsh::strchr(pos, '\n');
-			// Note this isn't supposed to happen as it means that
-			// the amount of lines isn't a product of two
-			if (lineEnd == nullptr) break;
-
-			char line1[32]{};
-			vsh::strncpy(line1, pos, lineEnd - pos);
-			pos = lineEnd + 1; // Switches to next line.
-
-			int base = (line1[0] == '0' && line1[1] == 'x') ? 16 : 10;
-			size_t address = (size_t)vsh::strtoul(line1, nullptr, base);
-
-			// 2. Load 2nd line (data) to a vector with bytes (uint8_t)
-			const char* bytesStart = pos;
-			lineEnd = vsh::strchr(pos, '\n');
-
-			if (lineEnd == nullptr)
-				lineEnd = pos + vsh::strlen(pos); // use end of string instead of breaking
-			pos = lineEnd + 1;
-
-			// Parse directly from the content string without copying
-			std::vector<uint8_t> bytes;
-			const char* p = bytesStart;
-
-			while (p < lineEnd)
-			{
-				// Skip spaces
-				while (p < lineEnd && *p == ' ')
-					p++;
-
-				if (p < lineEnd)
-				{
-					bytes.push_back((uint8_t)vsh::atoi(p));
-					// Skip digits
-					while (p < lineEnd && *p != ' ')
-						p++;
-				}
-			}
-
-			vshtask::Notify("Writing to memory");
-			WriteProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)address, &bytes[0], bytes.size());
-		}
-	}
 
 	bool IsGameReady(CODType gameType)
 	{
@@ -104,4 +81,93 @@ namespace CODCommon
 			libpsutil::string::begins_with(status, "Strict");
 	}
 
+
+	void LoadSavedStats(CODType gameType)
+	{
+		// Fixed: https://github.com/skiff/libpsutil/pull/7
+		std::string dataFile = read_file(GetDataFilePath(gameType));
+
+		// position is the internal c string
+		char* position = (char*)dataFile.c_str();
+
+		// Check if file is empty
+		char* newline = vsh::strchr(position, '\n');
+		if (newline == nullptr)
+			return;
+
+		while (*(position) != '\0')
+		{
+			size_t address;
+			std::vector<u8> secondItem;
+
+			newline = vsh::strchr(position, '\n');
+
+			// Skip comment and blank spaces.
+			if (*(position) == '#' || *(position) == '\n') {
+				position = newline + 1;
+				continue;
+			}
+
+			std::string firstItemS(position, newline);
+
+			address = ConvertStringToNumber(firstItemS);
+
+			// Do next line	
+			position = newline + 1;
+			newline = vsh::strchr(position, '\n');
+
+			if (newline == nullptr)
+				newline = position + vsh::strlen(position); // point to end of string instead
+
+			std::string secondItemS(position, newline);
+			
+			secondItem = ConvertStringToByteBuffer(secondItemS);
+
+			position = newline + 1;			
+																						// ⬐ alternative to vector.data()
+			WriteProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)address, &secondItem[0], secondItem.size());
+		}
+	}
+
+	void SaveCurrentStats(CODType gameType)
+	{
+		// Empty file
+		write_file(std::string(GetDataFilePath(gameType)), "");
+
+		u8 ByteBuffer[1];
+		std::string saveString;
+
+		const std::hash_map<std::string, MemoryEntry>* memory = nullptr;
+
+		switch (gameType)
+		{
+			case MW2:
+				memory = &MW2::GetMemory();
+				break;
+		}
+
+
+		for (const auto& pair : *memory)
+		{
+			const std::string& key = pair.first;
+			const MemoryEntry& entry = pair.second;
+
+			saveString += "# " + key + "\n";							// Comment
+			saveString += ConvertIntToHexString(entry.Address) + "\n";	// Address
+
+			// Get bytes
+			for (int i = 0; i < entry.Size; ++i)
+			{
+				ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)(entry.Address + i), ByteBuffer, 1);
+
+				std::string byte = ConvertIntToHexString(*ByteBuffer);
+
+				saveString += byte + " ";
+			}
+
+			saveString += "\n\n";
+		}
+
+		write_file(GetDataFilePath(gameType), saveString);
+	}
 };
