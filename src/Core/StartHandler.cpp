@@ -1,6 +1,8 @@
 #include "StartHandler.hpp"
 #include "Games/FindActiveGame.hpp"
 
+#include "Games/CODCommon.hpp"
+
 sys_ppu_thread_t gVshMenuPpuThreadId = SYS_PPU_THREAD_ID_INVALID;
 
 void MainThread(uint64_t arg)
@@ -12,7 +14,7 @@ void MainThread(uint64_t arg)
     //while (!paf::View::Find("explore_plugin"));
 
     g_FindActiveGame = FindActiveGame();
-    
+
     vshtask::Notify("CODPatch loaded!");
 
     sys_ppu_thread_exit(0);
