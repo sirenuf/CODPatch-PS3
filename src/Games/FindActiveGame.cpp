@@ -1,4 +1,5 @@
 #include "FindActiveGame.hpp"
+
 #include "Utils/SystemCalls.hpp"
 #include "Games/COD/MW2.hpp"
 
@@ -30,27 +31,26 @@ void FindActiveGame::Shutdown()
     }
 }
 
-// this function feels clutterred now because
-// I feel like it is detatched from the loop.
-// TODO: Come back later
-// I think HasGameInitialized variable is completely unncessary and does nothing.
-bool FindActiveGame::IsStillActive()
+bool FindActiveGame::IsGameRunning(CODCommon::CODType gameType)
 {
-    // If PID is not the same, game has exited. 
-    return (m_HasGameInitialized && m_GameProcessThreadRunning && vsh::GetGameProcessId() == GetRunningGameProcessId());
+    std::string currentGameID = GetGameID();
+    bool gameRunning = false;
+
+    switch (gameType) {
+        case CODCommon::MW2:
+            gameRunning = IsGameCodMW2(currentGameID);
+            break;
+    }
+
+    return (m_GameProcessThreadRunning && gameRunning);
 }
 
 u32 FindActiveGame::GetRunningGameProcessId()
 {
-    return m_CurrentGamePid;
+    return vsh::GetGameProcessId();
 }
 
-void FindActiveGame::SetRunningGameProcessId(u32 pid)
-{
-    m_CurrentGamePid = pid;
-}
-
-void FindActiveGame::GetGameName(std::string& outTitleId, std::string& outTitleName)
+std::string FindActiveGame::GetGameID()
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
@@ -62,84 +62,63 @@ void FindActiveGame::GetGameName(std::string& outTitleId, std::string& outTitleN
 
     vsh::GamePluginInterface::gameInfo info;
     gameInterface->GameInfo(info);
-    outTitleId = info.titleid;
-    outTitleName = info.titlename;
+    return info.titleid;
 }
 
-void FindActiveGame::GetGameBinaryName(std::string& binaryName)
+std::string FindActiveGame::GetGameName()
 {
-    if (m_CurrentGamePid == 0)
+    paf::View* gamePlugin = paf::View::Find("game_plugin");
+    if (!gamePlugin)
         return;
 
+    vsh::GamePluginInterface* gameInterface = gamePlugin->GetInterface<vsh::GamePluginInterface*>(1);
+    if (!gameInterface)
+        return;
+
+    vsh::GamePluginInterface::gameInfo info;
+    gameInterface->GameInfo(info);
+    return info.titlename;
+}
+
+std::string FindActiveGame::GetGameBinaryName()
+{
     char buffer[256]{};
-    ps3mapi_get_process_name_by_pid(m_CurrentGamePid, buffer);
+    ps3mapi_get_process_name_by_pid(vsh::GetGameProcessId(), buffer);
 
-    binaryName = buffer;
+    return std::string(buffer);
 }
 
-bool FindActiveGame::IsGameCodMW2(const std::string& titleId)
+bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
 {
-    if (titleId == "BLUS30450" || titleId == "BLUS30377" || titleId == "BLUS30337" || titleId == "BLUS30429"
-        || titleId == "BLES00683" || titleId == "BLES00691" || titleId == "BLES00690" || titleId == "BLES00686"
-        || titleId == "BLES00685" || titleId == "BLES00684" || titleId == "BLES00687" || titleId == "NPEB00731"
-        || titleId == "BLJM61006" || titleId == "BLJM60191")
-    {
-        std::string binaryName;
-        GetGameBinaryName(binaryName);
+    auto MW2GameIDs = MW2::GetGameIDs();
+    auto it = MW2::GetGameIDs().find(GameID);
+    if (it == MW2GameIDs.end())
+        return false;
 
-        // Makes sure that multiplayer has been launched.
-        if (libpsutil::string::ends_with(binaryName, "default_mp.se"))
-            return true;
-    }
-
-    return false;
+    bool isMultiplayer = libpsutil::string::ends_with(GetGameBinaryName(), "default_mp.se");
+    return isMultiplayer; // Multiplayer must be launched.
 }
 
-void FindActiveGame::WhileInGame(u32 pid, std::string titleId, std::string titleName)
+void FindActiveGame::WhileInGame(std::string titleId)
 {
-    // If game is already initialised return.
-    if (m_HasGameInitialized)
-        return;
-
     if (IsGameCodMW2(titleId))
-    {
-        m_HasGameInitialized = true;
-        MW2::Initialize();
-    }
+        MW2::Run();
 }
 
 void FindActiveGame::GameProcessThread(u64 arg)
 {
     g_FindActiveGame.m_GameProcessThreadRunning = true;
-    u32 gameProcessID = 0;
     while (g_FindActiveGame.m_GameProcessThreadRunning)
     {
-        gameProcessID = vsh::GetGameProcessId();
+        u32 gameProcessID = vsh::GetGameProcessId();
 
         if (gameProcessID != 0)
         {
-            libpsutil::sleep(1000);
-
-            g_FindActiveGame.SetRunningGameProcessId(gameProcessID);
-            if (g_FindActiveGame.GetRunningGameProcessId())
-            {
-                std::string gameTitleId;
-                std::string gameTitleName;
-                g_FindActiveGame.GetGameName(gameTitleId, gameTitleName);
-                g_FindActiveGame.WhileInGame(g_FindActiveGame.GetRunningGameProcessId(), gameTitleId, gameTitleName);
-            }
-        }
-        else
-        {
-            // disconnect from game process
-            if (g_FindActiveGame.GetRunningGameProcessId())
-            {
-                g_FindActiveGame.SetRunningGameProcessId(0);
-                g_FindActiveGame.m_HasGameInitialized = false;
-            }
+            std::string gameId = g_FindActiveGame.GetGameID();
+            g_FindActiveGame.WhileInGame(gameId);
         }
 
-        // Not sure if I still need this. Plugin is not meant to be unloaded in actuality though.
+        // Not sure if I still need this.
         // Good Bye CPU! Smallest sleep because we need to execute the patches as fast as possible 
         sys_timer_usleep(1668);
         sys_ppu_thread_yield();

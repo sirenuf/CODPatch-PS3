@@ -37,6 +37,28 @@ namespace MW2
 
 			return m;
 		}
+
+		std::set<std::string> buildGameIDsSet()
+		{
+			std::set<std::string> s;
+
+			s.insert("BLUS30450");
+			s.insert("BLUS30377");
+			s.insert("BLUS30337");
+			s.insert("BLUS30429");
+			s.insert("BLES00683");
+			s.insert("BLES00691");
+			s.insert("BLES00690");
+			s.insert("BLES00686");
+			s.insert("BLES00685");
+			s.insert("BLES00684");
+			s.insert("BLES00687");
+			s.insert("NPEB00731");
+			s.insert("BLJM61006");
+			s.insert("BLJM60191");
+
+			return s;
+		}
 	}
 
 	const std::hash_map<std::string, MemoryEntry>& GetMemory()
@@ -45,14 +67,20 @@ namespace MW2
 		return m;
 	}
 
-	void Initialize()
+	const std::set<std::string>& GetGameIDs()
+	{
+		static std::set<std::string> s = buildGameIDsSet();
+		return s;
+	}
+
+	void Run()
 	{
 		vshtask::Notify("In multiplayer.");
 
 		while (!CODCommon::IsGameReady(MW2))
 		{
 			// Check if this works by going in n out of game later
-			if (!g_FindActiveGame.IsStillActive())
+			if (!g_FindActiveGame.IsGameRunning(MW2))
 				return;
 			libpsutil::sleep(200);
 		}
@@ -61,7 +89,7 @@ namespace MW2
 		if (dataSaveFileExists)
 			CODCommon::LoadSavedStats(MW2);
 
-		while (g_FindActiveGame.IsStillActive())
+		while (g_FindActiveGame.IsGameRunning(MW2))
 		{
 			vshtask::Notify("Saving");
 

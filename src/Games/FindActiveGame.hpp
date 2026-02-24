@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Utils/Types.hpp"
+#include "Games/CODCommon.hpp"
 
 class FindActiveGame
 {
@@ -20,32 +21,39 @@ public:
     void Shutdown();
     uint32_t GetRunningGameProcessId();
 
-    /* Gets the PS3 GameID and official game name */
-    void GetGameName(std::string& outTitleId, std::string& outTitleName);
+    /**
+     * @return The official game name of the currently running game. E.g. Call of Duty: Modern Warfare 2
+     */
+    std::string GetGameName();
     
-    /** Gets the name of the currently running SELF binary associated with the game
+    /**
+     * @return The official PS3 "GameID" of the currently running game. E.g. BLES123456 
+     */
+    std::string GetGameID();
+
+    /**
+     * @return
+     * Gets the name of the currently running SELF binary associated with the game
      * 
      * NOTE: file extension is truncated to .se instead of .self 
      * 
      * Example output: <pid>_default_mp.se
      */
-    void GetGameBinaryName(std::string& binaryName);
+    std::string GetGameBinaryName();
     
     /**
      * @return
      * Boolean that determines if plugin has been unloaded or game has been exited.
      * Useful in while loops to make sure that it stops executing after game is closed or plugin is unloaded. 
      */
-    bool IsStillActive();
+    bool IsGameRunning(CODCommon::CODType gameType);
 
 private:
-    void SetRunningGameProcessId(u32 pid);
-    bool IsGameCodMW2(const std::string& titleId);
-    void WhileInGame(u32 pid, std::string titleId, std::string titleName);
+    bool IsGameCodMW2(const std::string& GameID);
+    void WhileInGame(std::string titleId);
 
 private:
     sys_ppu_thread_t m_GameProcessPpuThreadId = SYS_PPU_THREAD_ID_INVALID;
-    bool m_HasGameInitialized{};
     bool m_GameProcessThreadRunning{};
     uint32_t m_CurrentGamePid{};
 };
