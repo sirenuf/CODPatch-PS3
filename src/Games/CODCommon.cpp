@@ -131,14 +131,11 @@ namespace CODCommon
 
 	void SaveCurrentStats(CODType gameType)
 	{
-		// Empty file
-		write_file(std::string(GetDataFilePath(gameType)), "");
-
 		u8 ByteBuffer[1];
 		std::string saveString;
 
 		const std::hash_map<std::string, MemoryEntry>* memory = nullptr;
-
+		
 		switch (gameType)
 		{
 			case MW2:
@@ -158,7 +155,9 @@ namespace CODCommon
 			// Get bytes
 			for (int i = 0; i < entry.Size; ++i)
 			{
-				ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)(entry.Address + i), ByteBuffer, 1);
+				int result = ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)(entry.Address + i), ByteBuffer, sizeof(ByteBuffer));
+				if (result < 0)
+					return;
 
 				std::string byte = ConvertIntToHexString(*ByteBuffer);
 
