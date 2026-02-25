@@ -47,10 +47,6 @@ namespace CODCommon
 		{
 			std::string s = read_file(DataPath);
 
-			// Bug in libpsutil? Remove extra null-terminator.
-			// https://github.com/skiff/libpsutil/blob/0d55e10604cd26b18580454e3d7d6f94b0e87dda/libpsutil/system/filesystem.cpp#L37
-			s.resize(s.size() - 1);
-
 			s.erase(std::remove(s.begin(), s.end(), '\r'), s.end());
 
 			write_file(DataPath, s);
@@ -120,10 +116,10 @@ namespace CODCommon
 				newline = position + vsh::strlen(position); // point to end of string instead
 
 			std::string secondItemS(position, newline);
-			
+
 			secondItem = ConvertStringToByteBuffer(secondItemS);
 
-			position = newline + 1;			
+			position = newline + 1;
 																						// ⬐ alternative to vector.data()
 			WriteProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)address, &secondItem[0], secondItem.size());
 		}
