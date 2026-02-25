@@ -35,7 +35,7 @@ public:
      * @return
      * Gets the name of the currently running SELF binary associated with the game
      * 
-     * NOTE: file extension is truncated to .se instead of .self 
+     * NOTE: file name may be truncated. e.g. <pid>_default_mp.se
      * 
      * Example output: <pid>_default_mp.se
      */

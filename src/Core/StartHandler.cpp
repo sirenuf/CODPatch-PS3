@@ -3,6 +3,8 @@
 
 #include "Games/CODCommon.hpp"
 
+#include <libpsutil.h>
+
 sys_ppu_thread_t gVshMenuPpuThreadId = SYS_PPU_THREAD_ID_INVALID;
 
 void MainThread(uint64_t arg)

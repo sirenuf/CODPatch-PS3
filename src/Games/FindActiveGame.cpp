@@ -54,11 +54,11 @@ std::string FindActiveGame::GetGameID()
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
-        return;
+        return std::string();
 
     vsh::GamePluginInterface* gameInterface = gamePlugin->GetInterface<vsh::GamePluginInterface*>(1);
     if (!gameInterface)
-        return;
+        return std::string();
 
     vsh::GamePluginInterface::gameInfo info;
     gameInterface->GameInfo(info);
@@ -69,11 +69,11 @@ std::string FindActiveGame::GetGameName()
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
-        return;
+        return std::string();
 
     vsh::GamePluginInterface* gameInterface = gamePlugin->GetInterface<vsh::GamePluginInterface*>(1);
     if (!gameInterface)
-        return;
+        return std::string();
 
     vsh::GamePluginInterface::gameInfo info;
     gameInterface->GameInfo(info);
@@ -99,29 +99,24 @@ bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
     return isMultiplayer; // Multiplayer must be launched.
 }
 
-void FindActiveGame::WhileInGame(std::string titleId)
+void FindActiveGame::WhileInGame(std::string GameID)
 {
-    if (IsGameCodMW2(titleId))
+    if (IsGameCodMW2(GameID))
         MW2::Run();
 }
 
 void FindActiveGame::GameProcessThread(u64 arg)
 {
     g_FindActiveGame.m_GameProcessThreadRunning = true;
+    int i = 0;
     while (g_FindActiveGame.m_GameProcessThreadRunning)
     {
         u32 gameProcessID = vsh::GetGameProcessId();
 
         if (gameProcessID != 0)
-        {
-            std::string gameId = g_FindActiveGame.GetGameID();
-            g_FindActiveGame.WhileInGame(gameId);
-        }
+            g_FindActiveGame.WhileInGame(g_FindActiveGame.GetGameID());
 
-        // Not sure if I still need this.
-        // Good Bye CPU! Smallest sleep because we need to execute the patches as fast as possible 
-        sys_timer_usleep(1668);
-        sys_ppu_thread_yield();
+        libpsutil::sleep(2000);
     }
 
     sys_ppu_thread_exit(0);
