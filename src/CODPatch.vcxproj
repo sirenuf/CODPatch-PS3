@@ -48,8 +48,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
     <TargetExt>.prx</TargetExt>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <OutDir>$(SolutionDir)build\bin_$(Configuration)\</OutDir>
-    <IntDir>../build/int$(Platform)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\bin\</OutDir>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\intermediate\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
     <ClCompile>
@@ -67,8 +67,16 @@
     <PostBuildEvent>
       <Message>Sign PRX with scetool</Message>
       <Command>cd "$(SolutionDir)vendor\"
-scetool\scetool -0 SELF -1 TRUE -s FALSE -2 0A -3 1070000052000001 -4 01000002 -5 APP -6 0003004000000000 -A 0001000000000000 -e "$(TargetDir)$(TargetName)$(TargetExt)" "$(TargetDir)$(TargetName)_Main.sprx" 2&gt;&amp;1</Command>
+scetool\scetool -0 SELF -1 TRUE -s FALSE -2 0A -3 1070000052000001 -4 01000002 -5 APP -6 0003004000000000 -A 0001000000000000 -e "$(TargetDir)$(TargetName)$(TargetExt)" "$(TargetDir)$(TargetName).sprx" 2&gt;&amp;1</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|PS3'">
     <ClCompile>
