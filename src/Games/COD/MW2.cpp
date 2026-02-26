@@ -91,7 +91,6 @@ namespace MW2
 		}
 
 		bool dataSaveFileExists = CODCommon::VerifyFilesystem(MW2);
-		libpsutil::sleep(250); // Let the game load real quick
 		if (dataSaveFileExists)
 			CODCommon::LoadSavedStats(MW2);
 
