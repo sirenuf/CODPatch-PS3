@@ -16,13 +16,17 @@ namespace StringFunctions {
 	{
 		char buffer[32]{};
 
+		// Get hex formatted string
 		vsh::snprintf(buffer, sizeof(buffer), "%x", num);
-		int padding = vsh::strlen(buffer) + (vsh::strlen(buffer) % 2); // Display trailing zero, 0xf -> 0x0f
+		int hexLen = vsh::strlen(buffer);
 
-		memset(buffer, 0, sizeof(buffer));
+		int padding = hexLen + (hexLen % 2); // Round up to even number (0x0f -> 0xff)
+
+		// Make sure address shows all 4 bytes if it's over 1 byte.
+		if (padding > 2 && padding < 8)
+			padding = 8;
 
 		vsh::snprintf(buffer, sizeof(buffer), "0x%0*X", padding, num);
-
 		return std::string(buffer);
 	}
 
