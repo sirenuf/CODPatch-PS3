@@ -1,6 +1,7 @@
 #include "FindActiveGame.hpp"
 
 #include "Utils/SystemCalls.hpp"
+#include "Utils/StringFunctions.hpp"
 #include "Games/COD/MW2.hpp"
 
 #include <libpsutil.h>
@@ -54,11 +55,11 @@ std::string FindActiveGame::GetGameID()
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
-        return std::string();
+        return "";
 
     vsh::GamePluginInterface* gameInterface = gamePlugin->GetInterface<vsh::GamePluginInterface*>(1);
     if (!gameInterface)
-        return std::string();
+        return "";
 
     vsh::GamePluginInterface::gameInfo info;
     gameInterface->GameInfo(info);
@@ -69,11 +70,11 @@ std::string FindActiveGame::GetGameName()
 {
     paf::View* gamePlugin = paf::View::Find("game_plugin");
     if (!gamePlugin)
-        return std::string();
+        return "";
 
     vsh::GamePluginInterface* gameInterface = gamePlugin->GetInterface<vsh::GamePluginInterface*>(1);
     if (!gameInterface)
-        return std::string();
+        return "";
 
     vsh::GamePluginInterface::gameInfo info;
     gameInterface->GameInfo(info);
@@ -90,12 +91,13 @@ std::string FindActiveGame::GetGameBinaryName()
 
 bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
 {
-    auto MW2GameIDs = MW2::GetGameIDs();
-    auto it = MW2::GetGameIDs().find(GameID);
-    if (it == MW2GameIDs.end())
+    auto& gid = MW2::GetGameIDs();
+    bool gameIdFound = gid.find(GameID) != gid.end();
+
+    if (!gameIdFound)
         return false;
 
-    bool isMultiplayer = libpsutil::string::ends_with(GetGameBinaryName(), "default_mp.se");
+    bool isMultiplayer = StringFunctions::IsInString(GetGameBinaryName(), "default_mp");
     return isMultiplayer; // Multiplayer must be launched.
 }
 
@@ -108,7 +110,6 @@ void FindActiveGame::WhileInGame(std::string GameID)
 void FindActiveGame::GameProcessThread(u64 arg)
 {
     g_FindActiveGame.m_GameProcessThreadRunning = true;
-    int i = 0;
     while (g_FindActiveGame.m_GameProcessThreadRunning)
     {
         u32 gameProcessID = vsh::GetGameProcessId();
