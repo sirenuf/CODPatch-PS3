@@ -11,4 +11,6 @@ namespace StringFunctions {
 	std::string ConvertIntToHexString(u32 num);
 	
 	std::vector<u8> ConvertStringToByteBuffer(std::string& input);
+
+	bool IsInString(const std::string matchString, const std::string target);
 }

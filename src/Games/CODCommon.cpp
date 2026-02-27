@@ -130,7 +130,7 @@ namespace CODCommon
 		u8 ByteBuffer[1];
 		std::string saveString;
 
-		const std::hash_map<std::string, MemoryEntry>* memory = nullptr;
+		const std::vector<MemoryMapping>* memory = nullptr;
 		
 		switch (gameType)
 		{
@@ -140,12 +140,12 @@ namespace CODCommon
 		}
 
 
-		for (const auto& pair : *memory)
+		for (const MemoryMapping& map : *memory)
 		{
-			const std::string& key = pair.first;
-			const MemoryEntry& entry = pair.second;
+			const std::string& name = map.Name;
+			const MemoryEntry& entry = map.Entry;
 
-			saveString += "# " + key + "\n";							// Comment
+			saveString += "# " + name + "\n";							// Comment
 			saveString += ConvertIntToHexString(entry.Address) + "\n";	// Address
 
 			// Get bytes

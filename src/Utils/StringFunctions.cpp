@@ -55,4 +55,9 @@ namespace StringFunctions {
 
 		return buffer;
 	}
+
+	bool IsInString(const std::string matchString, const std::string target)
+	{
+		return matchString.find(target) != std::string::npos;
+	}
 }

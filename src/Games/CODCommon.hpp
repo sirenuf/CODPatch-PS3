@@ -14,15 +14,38 @@ namespace CODCommon
 	// Unfortunately can't use std::string because of weird initialisation error.
 	extern const char* CODTypeS[];
 
+	/**
+	 * A structure which contains the memory address and how many bytes that memory address contains its data.
+	 * @return
+	 */
 	struct MemoryEntry
 	{
+		MemoryEntry(size_t address, u16 size)
+			: Address(address), Size(size) {
+		}
+
 		size_t Address;
-		u16 Size; // Amount of bytes to read at address.
+		u16 Size;
+	};
+
+	/**
+	 * A structure which is meant to contain MemoryEntry.
+	 * name is only reserved for comments and identification.
+	 * @return
+	 */
+	struct MemoryMapping
+	{
+		MemoryMapping(const char* name, MemoryEntry entry)
+			: Name(name), Entry(entry) {
+		}
+
+		const char* Name;
+		MemoryEntry Entry;
 	};
 
 	/**
 	 * Verifies that the right folders and files exist and the integrity of the data save file.
-	 * @return
+	 * @returns
 	 * Boolean determines if the data file existed or not.
 	 */
 	bool VerifyFilesystem(CODType gameType);
@@ -38,17 +61,17 @@ namespace CODCommon
 
 	/**
 	 * For when game has connected to Activision. You can then write to its stats without it getting overwritten.
-	 * @return Boolean determining if game is ready or not.
+	 * @returns Boolean determining if game is ready or not.
 	 */
 	bool IsGameReady(CODType gameType);
 
 	/**
-	 * @return The file path of the project.
+	 * @returns The file path of the project.
 	 */
 	std::string GetRootDir();
 	
 	/**
-	 * @return The file path for storing the game stats data.
+	 * @returns The file path for storing the game stats data.
 	 */
 	std::string GetDataFilePath(CODType gameType);
 }
