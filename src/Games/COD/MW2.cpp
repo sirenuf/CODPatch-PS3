@@ -1,46 +1,54 @@
 #include "MW2.hpp"
 #include "Games/FindActiveGame.hpp"
 
+#include <vector>
+
 namespace MW2
 {
 	using CODCommon::MW2;
 	using CODCommon::MemoryEntry;
+	using CODCommon::MemoryMapping;
 
 	// Anonymous namespace to keep setup function isolated
 	namespace
 	{
 		// FYI: Have to do it this way because of map implementation on SDK
-		std::hash_map<std::string, MemoryEntry> buildMemoryMap()
+		std::vector<MemoryMapping> buildMemoryArray()
 		{
-			std::hash_map<std::string, MemoryEntry> m;
+			std::vector<MemoryMapping> a;
 
-			m.insert(std::make_pair("Prestige",			MemoryEntry{ 0x01FF9A9C, 1		}));
-			m.insert(std::make_pair("Experience",		MemoryEntry{ 0x01FF9A94, 4		}));
-			m.insert(std::make_pair("Score",			MemoryEntry{ 0x01FF9AA4, 4		}));
+			a.push_back(MemoryMapping("Prestige",								MemoryEntry( 0x01FF9A9C, 1   )));
+			a.push_back(MemoryMapping("Experience",								MemoryEntry( 0x01FF9A94, 4   )));
+			a.push_back(MemoryMapping("Score",									MemoryEntry( 0x01FF9AA4, 4   )));
 
-			m.insert(std::make_pair("Wins",				MemoryEntry{ 0x01FF9ADC, 4		}));
-			m.insert(std::make_pair("Losses",			MemoryEntry{ 0x01FF9AE0, 4		}));
-			m.insert(std::make_pair("Ties",				MemoryEntry{ 0x01FF9AE4, 4		}));
-			m.insert(std::make_pair("WinStreak",		MemoryEntry{ 0x01FF9AE8, 4		}));
+			a.push_back(MemoryMapping("Wins",									MemoryEntry( 0x01FF9ADC, 4   )));
+			a.push_back(MemoryMapping("Losses",									MemoryEntry( 0x01FF9AE0, 4   )));
+			a.push_back(MemoryMapping("Ties",									MemoryEntry( 0x01FF9AE4, 4   )));
+			a.push_back(MemoryMapping("WinStreak",								MemoryEntry( 0x01FF9AE8, 4   )));
 
-			m.insert(std::make_pair("Kills",			MemoryEntry{ 0x01FF9AA8, 4		}));
-			m.insert(std::make_pair("HeadShots",		MemoryEntry{ 0x01FF9ABC, 4		}));
-			m.insert(std::make_pair("Assists",			MemoryEntry{ 0x01FF9AB8, 4		}));
-			m.insert(std::make_pair("Streak",			MemoryEntry{ 0x01FF9AAC, 4		}));
+			a.push_back(MemoryMapping("Kills",									MemoryEntry( 0x01FF9AA8, 4   )));
+			a.push_back(MemoryMapping("HeadShots",								MemoryEntry( 0x01FF9ABC, 4   )));
+			a.push_back(MemoryMapping("Assists",								MemoryEntry( 0x01FF9AB8, 4   )));
+			a.push_back(MemoryMapping("Streak",									MemoryEntry( 0x01FF9AAC, 4   )));
 
-			m.insert(std::make_pair("Deaths",			MemoryEntry{ 0x01FF9AB0, 4		}));
-			m.insert(std::make_pair("TimePlayed",		MemoryEntry{ 0x01FF9AC8, 12		}));
+			a.push_back(MemoryMapping("Deaths",									MemoryEntry( 0x01FF9AB0, 4   )));
+			a.push_back(MemoryMapping("TimePlayed",								MemoryEntry( 0x01FF9AC8, 12  )));
 
-			m.insert(std::make_pair("Accolades",		MemoryEntry{ 0x01FF9297, 440	}));
-			m.insert(std::make_pair("Unlocks",			MemoryEntry{ 0x01FFA0C7, 480	}));
-			m.insert(std::make_pair("ClassData",		MemoryEntry{ 0x01FF9E40, 640	}));
+			a.push_back(MemoryMapping("Accolades",								MemoryEntry( 0x01FF9297, 440 )));
+			a.push_back(MemoryMapping("Unlocks",								MemoryEntry( 0x01FFA0C7, 480 )));
+			a.push_back(MemoryMapping("ClassData",								MemoryEntry( 0x01FF9E40, 640 )));
 
-			
-			m.insert(std::make_pair("ClanTag",			MemoryEntry{ 0x00A053A4, 4		}));
-			m.insert(std::make_pair("ClanTagMenu",		MemoryEntry{ 0x00A11422, 4		})); // This is the clan tag that displays on the main menu.
-			//m.insert(std::make_pair("ClanTagCardPS3",	MemoryEntry{ 0x007B4368, 4		})); // The current clan tag in the PS3 editing box. Because why not? NVM address seems to shift.
+			a.push_back(MemoryMapping("ClanTag",								MemoryEntry( 0x00A053A4, 4   )));
+			a.push_back(MemoryMapping("ClanTagMenu",							MemoryEntry( 0x00A11422, 4   )));
 
-			return m;
+			a.push_back(MemoryMapping("Emblem",									MemoryEntry( 0x01FFAAC7, 2   )));
+			a.push_back(MemoryMapping("Title",									MemoryEntry( 0x01FFAAC9, 2   )));
+
+			a.push_back(MemoryMapping("KillStreakRewards_Equipped",				MemoryEntry( 0x01FFAACD, 6   )));
+			a.push_back(MemoryMapping("KillStreakRewards_Unlocked",				MemoryEntry( 0x01FFACF3, 4   )));
+			a.push_back(MemoryMapping("KillStreakRewards_PointsAvailable",		MemoryEntry( 0x01C1EEDB, 1   )));
+
+			return a;
 		}
 
 		std::set<std::string> buildGameIDsSet()
@@ -63,12 +71,12 @@ namespace MW2
 			s.insert("BLJM60191");
 
 			return s;
-		}
+		};
 	}
 
-	const std::hash_map<std::string, MemoryEntry>& GetMemory()
+	const std::vector<MemoryMapping>& GetMemory()
 	{
-		static std::hash_map<std::string, MemoryEntry> m = buildMemoryMap();
+		static std::vector<MemoryMapping> m = buildMemoryArray();
 		return m;
 	}
 

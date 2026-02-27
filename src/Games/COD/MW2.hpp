@@ -11,9 +11,10 @@
 
 namespace MW2
 {
-	const std::set<std::string>& GetGameIDs();
+	using CODCommon::MemoryMapping;
 
-	const std::hash_map<std::string, CODCommon::MemoryEntry>& GetMemory();
+	const std::set<std::string>& GetGameIDs();
+	const std::vector<MemoryMapping>& GetMemory();
 
 	void Run();
 }
