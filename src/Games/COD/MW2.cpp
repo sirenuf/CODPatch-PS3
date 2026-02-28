@@ -92,7 +92,6 @@ namespace MW2
 
 		while (!CODCommon::IsGameReady(MW2))
 		{
-			// Check if this works by going in n out of game later
 			if (!g_FindActiveGame.IsGameRunning(MW2))
 				return;
 			libpsutil::sleep(200);
