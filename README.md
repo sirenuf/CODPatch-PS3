@@ -1,7 +1,13 @@
+> [!IMPORTANT]
+> This is in active development and has yet only been tested on NPEB MW2. However, it should support every release of MW2 on the latest 1.14 version!
+>
+> If not, report it as an issue. Patches are welcome in this branch
+
 > [!NOTE]
 > This way of RTM the memory values are subject to change, so it might take some time till more contributions are made into this project.
 >
 > In the meantime, I released this old method as a seperate branch and a related .SPRX build you can download in releases, just so you can still have fun without waiting.
+> Small visual bug is that your clan tag might not initially show on the main menu after loading multiplayer. It goes away after going in and out of the menu.
 
 # Installation
 Be sure to have a COBRA/PS3MAPI ready system, if you use modern HEN or a modern CFW like EVILNAT, then you don't have to worry.
@@ -12,7 +18,7 @@ Be sure to have a COBRA/PS3MAPI ready system, if you use modern HEN or a modern 
 4. Edit `/dev_hdd0/boot_plugins.txt` and add a new line: `/dev_hdd0/tmp/CODPatch.sprx` and save the file.
 5. Reboot your PS3.
 
-You're now done and your stat will save when playing COD MW2 multiplayer!
+You're now done and your stats will save when playing COD MW2 multiplayer!
 
 FYI: All of your saved data will be saved in the CODPatch directory inside `/dev_hdd0/tmp`, automatically created by CODPatch when you first sign into MW2 multiplayer.
 
