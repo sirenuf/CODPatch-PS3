@@ -1,3 +1,8 @@
+> [!NOTE]
+> This way of RTM the memory values are subject to change, so it might take some time till more contributions are made into this project.
+>
+> In the meantime, I released this old method as a seperate branch and a related .SPRX build you can download in releases, just so you can still have fun without waiting.
+
 # Installation
 Be sure to have a COBRA/PS3MAPI ready system, if you use modern HEN or a modern CFW like EVILNAT, then you don't have to worry.
 
