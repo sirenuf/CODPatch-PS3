@@ -1,3 +1,10 @@
+> [!WARNING]
+> This release doesn't save per PS3 user. This means that the saved stats will be shared across all users.
+>
+> If you play with an old account that has saving capability, make sure to not play on that account while this plugin is loaded, as it will overwrite your old saves from another account, and update that to activision.
+>
+> It is worth noting though that you can mod your stats however you want, CODPatch will save those modded changes, so it might not be a big concern.
+
 > [!IMPORTANT]
 > This is in active development and has yet only been tested on NPEB MW2. However, it should support every release of MW2 on the latest 1.14 version!
 >
