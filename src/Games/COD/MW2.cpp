@@ -48,6 +48,8 @@ namespace MW2
 			a.push_back(MemoryMapping("KillStreakRewards_Unlocked",				MemoryEntry( 0x01FFACF3, 4   )));
 			a.push_back(MemoryMapping("KillStreakRewards_PointsAvailable",		MemoryEntry( 0x01C1EEDB, 1   )));
 
+			a.push_back(MemoryMapping("ChallengeProgressData",					MemoryEntry( 0x01FFA41B, 1552 )));
+
 			return a;
 		}
 
