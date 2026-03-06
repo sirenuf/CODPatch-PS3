@@ -5,13 +5,12 @@
 
 sys_ppu_thread_t gVshMenuPpuThreadId = SYS_PPU_THREAD_ID_INVALID;
 
-void MainThread(uint64_t arg)
+void MainThread(u64 arg)
 {
-    // This makes it not possible to load dynamically.
-    // wait for XMB to load
-    //do
-    //    libpsutil::sleep(1000);
-    //while (!paf::View::Find("explore_plugin"));
+    // Freeze while XMB is not loaded, or if game is not running.
+    do
+        libpsutil::sleep(1000);
+    while (!paf::View::Find("explore_plugin") && vsh::GetGameProcessId() <= 0);
 
     g_FindActiveGame = FindActiveGame();
 
@@ -20,7 +19,7 @@ void MainThread(uint64_t arg)
     sys_ppu_thread_exit(0);
 }
 
-void MainThreadStop(uint64_t arg)
+void MainThreadStop(u64 arg)
 {
     vshtask::Notify("Unloading CODPatch!");
     // Prevent unload too fast (give time to other threads to finish)
@@ -31,7 +30,7 @@ void MainThreadStop(uint64_t arg)
 
     if (gVshMenuPpuThreadId != SYS_PPU_THREAD_ID_INVALID)
     {
-        uint64_t exitCode;
+        u64 exitCode;
         sys_ppu_thread_join(gVshMenuPpuThreadId, &exitCode);
     }
 

@@ -88,6 +88,27 @@ namespace MW2
 		return s;
 	}
 
+	bool AccountCanSave()
+	{
+		u32 level{};
+		ReadProcessMemory(vsh::GetGameProcessId(), (void*)0x01FF9A94, &level, 3);
+		
+		return level > 0;
+	}
+
+	// This manually applies the clan tag in the menu to correspond with set clan tag.
+	// This is entirely visual, and only here for consistency and perfectionism.
+	void ApplyClanTagInMenu()
+	{
+		char clanTag[4]{};
+
+		// Save current clan tag
+		ReadProcessMemory(vsh::GetGameProcessId(), (void*)0x00A053A4, clanTag, sizeof(clanTag));
+
+		// Write to clan tag menu
+		WriteProcessMemory(vsh::GetGameProcessId(), (void*)0x00A11422, clanTag, sizeof(clanTag));
+	}
+
 	void Run()
 	{
 		while (!CODCommon::IsGameReady(MW2))
@@ -97,11 +118,25 @@ namespace MW2
 			libpsutil::sleep(200);
 		}
 
-		libpsutil::sleep(2000); // Unpleasant, but fixes ClanTagMenu missing on startup.
+		// In case a user that has already an account that is able to save data, stop execution so we don't overwrite his data.
+		if (AccountCanSave())
+		{
+			vshtask::Notify("CODPatch: Warning! This account can save stats. Freezing execution.");
+			while (true)
+			{
+				if (!g_FindActiveGame.IsGameRunning(MW2))
+					return;
+
+				libpsutil::sleep(10000);
+			}
+		}
 
 		bool dataSaveFileExists = CODCommon::VerifyFilesystem(MW2);
 		if (dataSaveFileExists)
 			CODCommon::LoadSavedStats(MW2);
+
+		libpsutil::sleep(3000);
+		ApplyClanTagInMenu();
 
 		while (g_FindActiveGame.IsGameRunning(MW2))
 		{
