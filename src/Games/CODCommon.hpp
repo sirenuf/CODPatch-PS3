@@ -8,7 +8,8 @@ namespace CODCommon
 
 	enum CODType
 	{
-		MW2 = 0
+		MW2 = 0,
+		MW3
 	};
 
 	// Unfortunately can't use std::string because of weird initialisation error.
