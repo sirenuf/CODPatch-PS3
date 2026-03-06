@@ -90,8 +90,6 @@ namespace MW2
 
 	void Run()
 	{
-		vshtask::Notify("In multiplayer.");
-
 		while (!CODCommon::IsGameReady(MW2))
 		{
 			if (!g_FindActiveGame.IsGameRunning(MW2))
@@ -99,18 +97,16 @@ namespace MW2
 			libpsutil::sleep(200);
 		}
 
+		libpsutil::sleep(2000); // Unpleasant, but fixes ClanTagMenu missing on startup.
+
 		bool dataSaveFileExists = CODCommon::VerifyFilesystem(MW2);
 		if (dataSaveFileExists)
 			CODCommon::LoadSavedStats(MW2);
 
 		while (g_FindActiveGame.IsGameRunning(MW2))
 		{
-			vshtask::Notify("Saving");
-
 			CODCommon::SaveCurrentStats(MW2);
 			libpsutil::sleep(10000);
 		}
-
-		vshtask::Notify("Exiting this.");
 	}
 }

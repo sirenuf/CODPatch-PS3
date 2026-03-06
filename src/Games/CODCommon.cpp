@@ -16,31 +16,40 @@ namespace CODCommon
 	using namespace libpsutil::filesystem;
 	using namespace StringFunctions;
 	
-	const char* CODTypeS[] = { "mw2" };
+	const char* CODTypeS[] = { "mw2", "mw3" };
 	
-	
-	std::string GetRootDir()
+	// If crashing in the future, make sure this isn't null :)
+	xusers_t* GetXusers()
 	{
-		return "/dev_hdd0/tmp/CODPatch/";
+		static xusers_t* xusers = xsetting_CC56EB2D();
+		return xusers;
 	}
 
-	
+	std::string GetRootDir()
+	{
+		return "/dev_hdd0/plugins/CODPatch";
+	}
+
+	std::string GetUserDir()
+	{
+		return GetRootDir() + "/data/" + to_string(GetXusers()->GetCurrentUserNumber());
+	}
+
 	std::string GetDataFilePath(CODType gameType)
 	{
-		return GetRootDir() + CODTypeS[gameType] + "/data";
+		return GetUserDir() + "/save_data_" + CODTypeS[gameType] + ".txt";
 	}
 
 
 	bool VerifyFilesystem(CODType gameType)
 	{
-
 		std::string DataPath = GetDataFilePath(gameType);
 
 		create_directory(GetRootDir());
-		create_directory(GetRootDir() + CODTypeS[gameType]);
+		create_directory(GetRootDir() + "/data");
+		create_directory(GetUserDir());
 
-		bool storageFileExists;
-		storageFileExists = file_exists(DataPath);
+		bool storageFileExists = file_exists(DataPath);
 
 		// Make sure to remove CRs incase file has been edited on Windows!
 		if (storageFileExists)
@@ -51,10 +60,6 @@ namespace CODCommon
 
 			write_file(DataPath, s);
 		}
-		else
-		{
-			write_file(DataPath, "");
-		}
 
 		return storageFileExists;
 	}
@@ -64,29 +69,23 @@ namespace CODCommon
 	{
 		char buffer[8]{};
 		
-		switch (gameType)
-		{
-		case MW2:
-			ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x1C103AF, buffer, sizeof(buffer));
+		// Sets class name in buffer.
+		switch (gameType) {
+			case MW2:
+				ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x01FF9E6C, buffer, sizeof(buffer));
+				break;
 
-			// When "Your NAT Type" in the menu has a value
-			// then the game has connected.
-			return
-				libpsutil::string::begins_with(buffer, "Open") ||
-				libpsutil::string::begins_with(buffer, "Moderate") ||
-				libpsutil::string::begins_with(buffer, "Strict");
-			
-		case MW3:
-			ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x1C1982C, buffer, sizeof(buffer));
-
-			for (int i = 0; i < sizeof(buffer); ++i)
-				if (buffer[i] != NULL) // If class name has been retrieved, profile has init
-					return true;
-
-			return false;
+			case MW3:
+				ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x1C1982C, buffer, sizeof(buffer));
+				break;
 		}
 
+		for (int i = 0; i < sizeof(buffer); ++i)
+			if (buffer[i] != NULL) // If class name has been retrieved, profile has init
+				return true;
+
 		return false;
+
 	}
 
 
@@ -149,6 +148,10 @@ namespace CODCommon
 			case MW2:
 				memory = &MW2::GetMemory();
 				break;
+
+			default:
+				vshtask::Notify("Attempt to get memory from unknown game.");
+				return;
 		}
 
 

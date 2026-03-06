@@ -101,7 +101,6 @@ std::string FindActiveGame::GetGameBinaryName()
     return std::string(buffer);
 }
 
-// TODO: Rewrite this to a unified function
 bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
 {
     auto& gid = MW2::GetGameIDs();

@@ -4,7 +4,11 @@
 #include "Utils/Types.hpp"
 
 namespace CODCommon
-{
+{	
+	/**
+	 * @returns a table sort of thing that contains a lot of user related functions. See vsh/xsetting.hpp
+	 */
+	xusers_t* GetXusers();
 
 	enum CODType
 	{
@@ -70,6 +74,11 @@ namespace CODCommon
 	 * @returns The file path of the project.
 	 */
 	std::string GetRootDir();
+
+	/**
+	 * @returns The directory path containing save data for the current user.
+	 */
+	std::string GetUserDir();
 	
 	/**
 	 * @returns The file path for storing the game stats data.
