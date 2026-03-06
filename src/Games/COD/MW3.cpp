@@ -62,8 +62,7 @@ namespace MW3
 		WriteProcessMemory(pid, (void*)0x731474, unknownPS3Id, sizeof(unknownPS3Id));
 		WriteProcessMemory(pid, (void*)0x8A8118, unknownPS3Id, sizeof(unknownPS3Id));
 
-		int i = WriteProcessMemory(pid,  (void*)0x731E30,   XUID,  sizeof(XUID));
-
+		WriteProcessMemory(pid,  (void*)0x731E30,   XUID,  sizeof(XUID));
 		WriteProcessMemory(pid,  (void*)0x8A37C8,   XUID,  sizeof(XUID));
 		WriteProcessMemory(pid,  (void*)0x8A8220,   XUID,  sizeof(XUID));
 		WriteProcessMemory(pid,  (void*)0x1864538,  XUID,  sizeof(XUID));
