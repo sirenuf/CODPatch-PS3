@@ -63,18 +63,30 @@ namespace CODCommon
 	bool IsGameReady(CODType gameType)
 	{
 		char buffer[8]{};
-		if (gameType == MW2)													 // This is the address for the NAT type.
+		
+		switch (gameType)
+		{
+		case MW2:
 			ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x1C103AF, buffer, sizeof(buffer));
 
-		// Need to convert to std::string
-		std::string status = buffer;		
+			// When "Your NAT Type" in the menu has a value
+			// then the game has connected.
+			return
+				libpsutil::string::begins_with(buffer, "Open") ||
+				libpsutil::string::begins_with(buffer, "Moderate") ||
+				libpsutil::string::begins_with(buffer, "Strict");
+			
+		case MW3:
+			ReadProcessMemory(g_FindActiveGame.GetRunningGameProcessId(), (void*)0x1C1982C, buffer, sizeof(buffer));
 
-		// When "Your NAT Type" in the menu has a value
-		// Then the game has connected.
-		return 
-			libpsutil::string::begins_with(status, "Open") ||
-			libpsutil::string::begins_with(status, "Moderate") ||
-			libpsutil::string::begins_with(status, "Strict");
+			for (int i = 0; i < sizeof(buffer); ++i)
+				if (buffer[i] != NULL) // If class name has been retrieved, profile has init
+					return true;
+
+			return false;
+		}
+
+		return false;
 	}
 
 

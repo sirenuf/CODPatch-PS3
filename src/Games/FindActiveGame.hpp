@@ -50,6 +50,7 @@ public:
 
 private:
     bool IsGameCodMW2(const std::string& GameID);
+    bool IsGameCodMW3(const std::string& GameID);
     void WhileInGame(std::string titleId);
 
 private:

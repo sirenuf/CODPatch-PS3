@@ -2,9 +2,13 @@
 
 #include "Utils/SystemCalls.hpp"
 #include "Utils/StringFunctions.hpp"
+
 #include "Games/COD/MW2.hpp"
+#include "Games/COD/MW3.hpp"
 
 #include <libpsutil.h>
+
+using CODCommon::CODType;
 
 FindActiveGame g_FindActiveGame;
 
@@ -32,18 +36,26 @@ void FindActiveGame::Shutdown()
     }
 }
 
-bool FindActiveGame::IsGameRunning(CODCommon::CODType gameType)
+bool FindActiveGame::IsGameRunning(CODType gameType)
 {
+    if (!m_GameProcessThreadRunning)
+        return false;
+
     std::string currentGameID = GetGameID();
     bool gameRunning = false;
 
-    switch (gameType) {
-        case CODCommon::MW2:
+    switch (gameType)
+    {
+    case CODCommon::MW2:
             gameRunning = IsGameCodMW2(currentGameID);
+            break;
+
+    case CODCommon::MW3:
+            gameRunning = IsGameCodMW3(currentGameID);
             break;
     }
 
-    return (m_GameProcessThreadRunning && gameRunning);
+    return gameRunning;
 }
 
 u32 FindActiveGame::GetRunningGameProcessId()
@@ -89,9 +101,22 @@ std::string FindActiveGame::GetGameBinaryName()
     return std::string(buffer);
 }
 
+// TODO: Rewrite this to a unified function
 bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
 {
     auto& gid = MW2::GetGameIDs();
+    bool gameIdFound = gid.find(GameID) != gid.end();
+
+    if (!gameIdFound)
+        return false;
+
+    bool isMultiplayer = StringFunctions::IsInString(GetGameBinaryName(), "default_mp");
+    return isMultiplayer; // Multiplayer must be launched.
+}
+
+bool FindActiveGame::IsGameCodMW3(const std::string& GameID)
+{
+    auto& gid = MW3::GetGameIDs();
     bool gameIdFound = gid.find(GameID) != gid.end();
 
     if (!gameIdFound)
@@ -105,6 +130,8 @@ void FindActiveGame::WhileInGame(std::string GameID)
 {
     if (IsGameCodMW2(GameID))
         MW2::Run();
+    else if (IsGameCodMW3(GameID))
+        MW3::Run();
 }
 
 void FindActiveGame::GameProcessThread(u64 arg)
