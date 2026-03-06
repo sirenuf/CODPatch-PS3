@@ -59,8 +59,8 @@ namespace MW3
 
 		WriteProcessMemory(pid, (void*)0x731460, SpoofedUsername, sizeof(SpoofedUsername));
 
-		WriteProcessMemory(pid, (void*)0x731474, unknownPS3Id, sizeof(unknownPS3Id));
-		WriteProcessMemory(pid, (void*)0x8A8118, unknownPS3Id, sizeof(unknownPS3Id));
+		WriteProcessMemory(pid, (void*)0x731474, unknownPS3Id, sizeof(unknownPS3Id)); // I have no idea what this is. I think it is fingerprinting, so anti cheat mitigation?
+		WriteProcessMemory(pid, (void*)0x8A8118, unknownPS3Id, sizeof(unknownPS3Id)); // It just zeroes out the values that was there. Spoofing works without doing this. Will keep it just for safety reasons.
 
 		WriteProcessMemory(pid,  (void*)0x731E30,   XUID,  sizeof(XUID));
 		WriteProcessMemory(pid,  (void*)0x8A37C8,   XUID,  sizeof(XUID));
