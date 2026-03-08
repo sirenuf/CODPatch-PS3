@@ -113,6 +113,11 @@ bool FindActiveGame::IsGameCodMW2(const std::string& GameID)
     return isMultiplayer; // Multiplayer must be launched.
 }
 
+/*
+    TODO:
+    Need to change is multiplayer logic for both games.
+    Games with mod menus that replace "EBOOTs" replace binary names to generic EBOOT ones only.
+*/
 bool FindActiveGame::IsGameCodMW3(const std::string& GameID)
 {
     auto& gid = MW3::GetGameIDs();

@@ -80,6 +80,7 @@ namespace CODCommon
 				break;
 		}
 
+		// TODO: Subject to change
 		for (int i = 0; i < sizeof(buffer); ++i)
 			if (buffer[i] != NULL) // If class name has been retrieved, profile has init
 				return true;
