@@ -80,10 +80,10 @@ namespace CODCommon
 				break;
 		}
 
-		// TODO: Subject to change
-		for (int i = 0; i < sizeof(buffer); ++i)
-			if (buffer[i] != NULL) // If class name has been retrieved, profile has init
-				return true;
+		// TODO: Subject to change. Right now just checks so the first character of the classname
+		// offset is not NULL. This is for custom EBOOTs that might have garbage after the first byte.
+		if (buffer[0] != NULL)
+			return true;
 
 		return false;
 
