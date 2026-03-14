@@ -44,6 +44,9 @@ struct exportStub_s
 
 u32 GetCurrentToc();
 
+void PatchInJump(int Address, int Destination);
+void HookFunctionStart(int Address, int saveStub, int Destination);
+
 /** Writes memory to a process.
  * @param pid Process ID of the process you want to poke in.
  * @param address The memory offset.
