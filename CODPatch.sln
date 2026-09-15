@@ -1,9 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36623.8 d17.14
+VisualStudioVersion = 17.14.36623.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CODPatch", "src\CODPatch.vcxproj", "{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CODPatch", "Projects\Main\CODPatch.vcxproj", "{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Loader", "Projects\Loader\Loader.vcxproj", "{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB} = {9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Projects\Shared\Shared.vcxproj", "{C0B99BCB-17FC-4935-8AF7-3AFF0D4F2BE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +22,19 @@ Global
 		{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}.Debug|PS3.Build.0 = Debug|PS3
 		{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}.Release|PS3.ActiveCfg = Release|PS3
 		{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}.Release|PS3.Build.0 = Release|PS3
+		{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}.Debug|PS3.ActiveCfg = Debug|PS3
+		{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}.Debug|PS3.Build.0 = Debug|PS3
+		{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}.Release|PS3.ActiveCfg = Release|PS3
+		{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}.Release|PS3.Build.0 = Release|PS3
+		{C0B99BCB-17FC-4935-8AF7-3AFF0D4F2BE2}.Debug|PS3.ActiveCfg = Debug|PS3
+		{C0B99BCB-17FC-4935-8AF7-3AFF0D4F2BE2}.Debug|PS3.Build.0 = Debug|PS3
+		{C0B99BCB-17FC-4935-8AF7-3AFF0D4F2BE2}.Release|PS3.ActiveCfg = Release|PS3
+		{C0B99BCB-17FC-4935-8AF7-3AFF0D4F2BE2}.Release|PS3.Build.0 = Release|PS3
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {614D1522-A769-45F4-A45F-1D8E86F2074C}
 	EndGlobalSection
 EndGlobal

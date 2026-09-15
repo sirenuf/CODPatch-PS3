@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|PS3">
+      <Configuration>Debug</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|PS3">
+      <Configuration>Release</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath12)</VCTargetsPath>
+    <ProjectGuid>{9DA50790-9B92-4D38-A2EC-F8BE58F8F9DB}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>SNC</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|PS3'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>SNC</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(DebuggerFlavor)'=='PS3Debugger'" Label="OverrideDebuggerDefaults">
+    <!--LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand-->
+    <!--LocalDebuggerCommandArguments></LocalDebuggerCommandArguments-->
+    <!--LocalDebuggerCommandLine>-r -e -m</LocalDebuggerCommandLine-->
+    <!--LocalRunCommandLine>-r</LocalRunCommandLine-->
+    <!--LocalTunerCommandLine></LocalTunerCommandLine-->
+    <!--LocalDebuggerFileServingDirectory>$(ProjectDir)</LocalDebuggerFileServingDirectory-->
+    <!--LocalDebuggerHomeDirectory>$(ProjectDir)</LocalDebuggerHomeDirectory-->
+    <!--LocalDebuggerProjectFile></LocalDebuggerProjectFile-->
+    <!--LocalDebuggerResetType>Soft</LocalDebuggerResetType-->
+    <!--LocalDebuggerClearTty>False</LocalDebuggerClearTty-->
+  </PropertyGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)Projects\Common.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|PS3'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)Projects\Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <!-- The linker writes a plain PRX into the prx tree; the packaging step in
+       Common.props derives the sprx tree's plugin from it, which is what the two
+       Module properties below are for. Everything else is shared. -->
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)\prx\CODPatch\</OutDir>
+    <TargetExt>.prx</TargetExt>
+    <ModulePackageDir>$(SolutionDir)Build\bin\$(Configuration)\sprx\CODPatch</ModulePackageDir>
+    <!-- CODPatch is a VSH plugin, so it keeps the sys/internal + vsh authority. -->
+    <ModuleAuthId>1070000052000001</ModuleAuthId>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)vendor\VirtualShell\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)vendor\VirtualShell\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <!-- ps3ppuld resolves left to right, so the shared set comes first and the VSH
+           exports, which depend on it, come after. -->
+      <AdditionalDependencies>$(ModuleCommonLibs);-lvshtask_export_stub;-lpaf_export_stub;-lvshmain_export_stub;-lvshcommon_export_stub;-lstdc_export_stub;-lallocator_export_stub;-lsys_net_export_stub;-lxsetting_export_stub;-lsysPrxForUser_export_stub;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\StartHandler.cpp" />
+    <ClCompile Include="Games\COD\BO1\BO1.cpp" />
+    <ClCompile Include="Games\COD\BO2\BO2.cpp" />
+    <ClCompile Include="Games\COD\MW2\MW2.cpp" />
+    <ClCompile Include="Games\COD\MW3\MW3.cpp" />
+    <ClCompile Include="Games\Common.cpp" />
+    <ClCompile Include="Games\FindActiveGame.cpp" />
+    <ClCompile Include="Core\Main.cpp" />
+    <ClCompile Include="Utils\Std.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\StartHandler.hpp" />
+    <ClInclude Include="Games\COD\BO1\BO1.hpp" />
+    <ClInclude Include="Games\COD\BO2\BO2.hpp" />
+    <ClInclude Include="Games\COD\MW2\MW2.hpp" />
+    <ClInclude Include="Games\COD\MW3\MW3.hpp" />
+    <ClInclude Include="Games\Common.hpp" />
+    <ClInclude Include="Games\FindActiveGame.hpp" />
+    <ClInclude Include="Utils\Std.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.vcxproj">
+      <Project>{c0b99bcb-17fc-4935-8af7-3aff0d4f2be2}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
