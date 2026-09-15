@@ -6,7 +6,7 @@
    *  **Fixes** the underlying XUID missmatch. Stats now save.
 
 2. ✅ **Modern Warfare 3**
-   * **Fixes** the underlying XUID missmatch. Stats now save and you can join unpatched old hosts as well.
+   * **Fixes** the underlying XUID missmatch. Stats save like usual and you can play the game like normal. This will also not crash other’s games anymore if the host is an unpatched client with an old account.
    * **Fixes** unpatched player's of new accounts to also join your server and not crash it.
 
 4. ✅ **Black Ops 1**
@@ -14,6 +14,7 @@
 
 5. ✅ **Black Ops 2**
    * **Fixes** crashing if you're logged in on PSN while starting the game.
+
   
 ### 🔜 Soon™:
 * **Universal RCE/RME protection from IW3 to T6**.
