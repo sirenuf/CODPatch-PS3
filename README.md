@@ -1,4 +1,6 @@
 # CODPatch
+#### Read my XUID/DemonWare research report [here](https://github.com/sirenuf/COD-PS3-DemonWare-Research)
+
 ### Patched games:
 1. ✅ **Modern Warfare 2**
    *  **Fixes** the underlying XUID missmatch. Stats now save.
