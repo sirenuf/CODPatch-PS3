@@ -21,6 +21,7 @@
 * **Auto updater in the background which applies updates on reboot.**
 * **XMB setting integration** (it won't be noticeable or break design languages).
 * **Unlock All payloads** - after XMB integration is done, you will be able to do unlock all in any game if you want.
+* **Easier installation** - more seamless and quick automatic installation method will be done, in favour of end users.
 
 <br>
 
