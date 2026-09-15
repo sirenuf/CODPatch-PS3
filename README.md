@@ -26,6 +26,40 @@ After following them, start any COD on a new account and it will just work™.
 
 <br>
 
+# Building
+### Still a big TODO. If you have problems report them as an issue
+
+<br>
+
+## Prerequisite 
+* You **need** to have the official **Sony SDK** installed.
+* **Windows only**, unfortunately for now. I couldn't get [PS3DK](https://github.com/FirebirdTA01/PS3DK) setup to work properly with SPRXs that have their own entrys. And PS3DK is explicitly only tested on RPCS3, very unfortunate, might revisit in the future. Sony SDK only supports C++11 on proprietary SN cross compiler, only available for Windows.
+* **Visual Studio Community or better** (no cmake with PS3DK)
+
+<br>
+
+1. **Clone with recursion** - needs to be done to grab submodules
+```bash
+git clone https://github.com/sirenuf/CODPatch-PS3.git --recursive
+```
+2. **Build scetool** - if you want to use this on HEN, you need to build using the `Release` preset, which gives you signed output files.
+```bash
+cd CODPatch-PS3
+cd vendor/scetool
+make
+```
+3. **Install libpsutil**
+```
+still wip because the pre-compiled release hasn't been updated with my memory leak fixes yet. Build the program instead of using the Releases.
+https://github.com/skiff/libpsutil
+
+in the future i'll probably just redirect to my own fork.
+```
+4. **Build away**
+If libpsutil is setup correctly, you can now build the project by opening the solution in any Visual Studio release.
+
+<br>
+
 # Credits
 * [**setsid**](https://github.com/setsid) - For his amazing research in both BO2 and MW3 which helped a ton. His specific BO2 NOP patch is used in this project and works perfectly.
 
