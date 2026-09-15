@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|PS3">
+      <Configuration>Debug</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|PS3">
+      <Configuration>Release</Configuration>
+      <Platform>PS3</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath12)</VCTargetsPath>
+    <ProjectGuid>{D8F47F26-EFFC-48E5-A8A7-127BF6A78EC5}</ProjectGuid>
+    <ProjectName>Loader</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>SNC</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|PS3'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>SNC</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(DebuggerFlavor)'=='PS3Debugger'" Label="OverrideDebuggerDefaults">
+    <!--LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand-->
+    <!--LocalDebuggerCommandArguments></LocalDebuggerCommandArguments-->
+    <!--LocalDebuggerCommandLine>-r -e -m</LocalDebuggerCommandLine-->
+    <!--LocalRunCommandLine>-r</LocalRunCommandLine-->
+    <!--LocalTunerCommandLine></LocalTunerCommandLine-->
+    <!--LocalDebuggerFileServingDirectory>$(ProjectDir)</LocalDebuggerFileServingDirectory-->
+    <!--LocalDebuggerHomeDirectory>$(ProjectDir)</LocalDebuggerHomeDirectory-->
+    <!--LocalDebuggerProjectFile></LocalDebuggerProjectFile-->
+    <!--LocalDebuggerResetType>Soft</LocalDebuggerResetType-->
+    <!--LocalDebuggerClearTty>False</LocalDebuggerClearTty-->
+  </PropertyGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)Projects\Common.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|PS3'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)Projects\Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <!-- The linker writes a plain PRX into the prx tree; the packaging step in
+       Common.props derives the sprx tree's module from it, which is what the two
+       Module properties below are for. Everything else is shared. -->
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)\prx\CODPatch\Modules\</OutDir>
+    <TargetExt>.prx</TargetExt>
+    <ModulePackageDir>$(SolutionDir)Build\bin\$(Configuration)\sprx\CODPatch\Modules</ModulePackageDir>
+    <!-- This one is loaded into the running game's process, so it is signed with the
+         retail game authority and not the sys/internal + vsh one CODPatch uses. -->
+    <ModuleAuthId>1010000001000003</ModuleAuthId>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>$(ModuleCommonLibs);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="GamePatches\BO1\BO1.cpp" />
+    <ClCompile Include="GamePatches\BO1\Assembly\Cave.s" />
+    <ClCompile Include="GamePatches\BO2\BO2.cpp" />
+    <ClCompile Include="LoaderCore\LoaderEntry.cpp" />
+    <ClCompile Include="GamePatches\MW2\MW2.cpp" />
+    <ClCompile Include="GamePatches\MW2\Assembly\Cave.s" />
+    <ClCompile Include="LoaderCore\LoaderMain.cpp" />
+    <ClCompile Include="GamePatches\MW3\MW3.cpp" />
+    <ClCompile Include="GamePatches\MW3\Assembly\Cave.s" />
+    <ClCompile Include="GamePatches\MW3\Assembly\FrameCave.s" />
+    <ClCompile Include="Utils\LoaderCommon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GamePatches\BO1\BO1.hpp" />
+    <ClInclude Include="GamePatches\BO2\BO2.hpp" />
+    <ClInclude Include="LoaderCore\LoaderEntry.hpp" />
+    <ClInclude Include="GamePatches\MW2\MW2.hpp" />
+    <ClInclude Include="GamePatches\MW3\MW3.hpp" />
+    <ClInclude Include="Utils\LoaderCommon.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.vcxproj">
+      <Project>{c0b99bcb-17fc-4935-8af7-3aff0d4f2be2}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

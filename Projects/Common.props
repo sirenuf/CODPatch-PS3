@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Settings shared by every project in this solution. Imported from each vcxproj's
+    PropertySheets ImportGroup, so anything here can still be overridden by the
+    project afterwards if it genuinely needs to differ.
+
+    What belongs here: anything identical across projects, and anything that differs
+    only between Debug and Release. What does not: the things that are genuinely per
+    project, which is now down to output paths, the libraries each module links on
+    top of the shared set, and the two values the packaging below reads out of each
+    module project - ModulePackageDir and ModuleAuthId.
+  -->
+
+  <PropertyGroup>
+    <!-- One intermediate tree per project per configuration. OutDir stays with the
+         projects, since each produces a different kind of thing - a PRX, an SPRX and
+         a static library. -->
+    <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\$(Configuration)\</IntDir>
+
+    <!-- The SDK libraries every module here ends up needing. ModuleCommonLibs adds
+         the ones both PRXs use on top of those. Projects name these rather than
+         repeating the lists:
+
+           <AdditionalDependencies>$(ModuleCommonLibs);%(AdditionalDependencies)</AdditionalDependencies>
+
+         ps3ppuld resolves left to right and archives are lazy, so anything that
+         depends on these has to appear before them on the line. That is also why
+         these are properties and not item definitions: a project appending to
+         %(AdditionalDependencies) would end up prepending to it instead, and the
+         order is exactly what matters. -->
+    <CellSystemLibs>$(SCE_PS3_ROOT)\target\ppu\lib\libc.a;$(SN_PS3_PATH)\ppu\lib\sn\libsn.a;$(SCE_PS3_ROOT)\target\ppu\lib\libm.a;$(SCE_PS3_ROOT)\target\ppu\lib\libio_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\liblv2_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libc_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsysutil_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsyscall.a;$(SCE_PS3_ROOT)\target\ppu\lib\hash\libsha256.a</CellSystemLibs>
+    <ModuleCommonLibs>-lpsutil;-lsysutil_np_stub;-lnet_stub;-lnetctl_stub;$(CellSystemLibs)</ModuleCommonLibs>
+  </PropertyGroup>
+
+  <!--
+    Neither PRX exports anything. They declare SYS_MODULE_START and nothing else.
+	So ps3ppuld never writes the cellPrx_<project>_stub.a the toolset expects from a
+    DynamicLibrary, and the build says so on every link. Nothing links against these
+    modules either, so say up front that they publish no stub library. A PRX here
+    that did export symbols would have to set this back to false.
+  -->
+  <PropertyGroup Condition="'$(ConfigurationType)'=='DynamicLibrary'">
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+  </PropertyGroup>
+
+  <!-- Applies to every configuration. -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CppLanguageStd>Cpp11</CppLanguageStd>
+      <!-- Object files are named after the base filename alone by default, so two
+           sources sharing one - MW2 and MW3 both having a Cave.s, say - compile to
+           the same object and clobber each other. Ending this in a directory
+           separator mirrors the source tree under IntDir instead. -->
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <!-- Every project compiles against the shared headers, Shared itself included,
+           since this is the directory it keeps its own public headers in. -->
+      <AdditionalIncludeDirectories>$(SolutionDir)Projects\Shared\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Both PRXs link the same way. The fake self and the signed self are both made
+       from a plain PRX afterwards, so neither wants FSPRXFile here, and neither
+       wants FSELFFile, which is an executable and would want a main. -->
+  <ItemDefinitionGroup Condition="'$(ConfigurationType)'=='DynamicLibrary'">
+    <Link>
+      <OutputFormat>PRXFile</OutputFormat>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!--
+    The only things that genuinely differ between configurations.
+
+    NDEBUG is standard C and is the one that acts on its own - <assert.h> checks it
+    and compiles assert() away. _DEBUG is a Microsoft convention that nothing in this
+    toolchain reads by itself; it is only a flag our own code could test.
+    __CELL_ASSERT__ turns the SDK's own assertions on.
+  -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;__CELL_ASSERT__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OptimizationLevel>Level2</OptimizationLevel>
+    </ClCompile>
+    <Link>
+      <!-- Nothing debugs a release module, and the symbol and debug sections are
+           dead weight in something that gets loaded into a running game. -->
+      <InfoStripping>StripSymsAndDebug</InfoStripping>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!--
+    Packaging. Both PRXs are wrapped the same way and differ only in where the result
+    goes and, in Release, which program authority ID it is signed with, so a module
+    project opts in by setting those two properties:
+
+      <ModulePackageDir>$(SolutionDir)Build\bin\$(Configuration)\sprx\CODPatch</ModulePackageDir>
+      <ModuleAuthId>1070000052000001</ModuleAuthId>
+
+    A project that sets neither is left alone. Properties are evaluated before item
+    definitions no matter which file they live in, so it does not matter that the
+    projects set these after importing this sheet.
+  -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' and '$(ModulePackageDir)'!=''">
+    <PostBuildEvent>
+      <Message>Make fake self in SPRX folder.</Message>
+      <Command>if not exist "$(ModulePackageDir)" mkdir "$(ModulePackageDir)"
+"$(SCE_PS3_ROOT)\host-win32\bin\make_fself" -c "$(TargetPath)" "$(ModulePackageDir)\$(TargetName).sprx"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+
+  <!--
+    Release signs with scetool instead, so what ships is a real SELF and keeps
+    working under HEN. The authority ID is the one thing that cannot be shared: lv2
+    refuses a module whose authority does not match the process it is being loaded
+    into and returns EPERM (0x80010009), so the VSH plugin carries the sys/internal +
+    vsh ID and the Loader, which goes into a running game, carries the retail game
+    one.
+  -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' and '$(ModulePackageDir)'!=''">
+    <PostBuildEvent>
+      <Message>Sign PRX with scetool in SPRX folder.</Message>
+      <Command>if not exist "$(ModulePackageDir)" mkdir "$(ModulePackageDir)"
+cd /d "$(SolutionDir)vendor"
+scetool\scetool -0 SELF -1 TRUE -s FALSE -2 0A -3 $(ModuleAuthId) -4 01000002 -5 APP -6 0003004000000000 -A 0001000000000000 -e "$(TargetPath)" "$(ModulePackageDir)\$(TargetName).sprx" 2&gt;&amp;1</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+</Project>

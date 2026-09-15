@@ -1,5 +1,6 @@
 .vscode/*
 build/*
+Build/*
 **/.vs
 **/Debug/*
 **/x64/*
