@@ -14,9 +14,10 @@
    * **Fixes** crashing if you're logged in on PSN while starting the game.
   
 ### 🔜 Soon™:
-* **Universal RCE protection from IW3 to T6**.
+* **Universal RCE/RME protection from IW3 to T6**.
 * **Auto updater in the background which applies updates on reboot.**
 * **XMB setting integration** (it won't be noticeable or break design languages).
+* **Unlock All payloads** - after XMB integration is done, you will be able to do unlock all in any game if you want.
 
 <br>
 
