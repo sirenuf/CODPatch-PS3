@@ -21,7 +21,8 @@
 <br>
 
 # Install
-**Download** the zip file from [here](https://github.com/sirenuf/CODPatch-PS3/releases/latest) and read the instructions. After following them, start any COD on a new account and it will just work™.
+**Download** the zip file from the **Releases page** [here](https://github.com/sirenuf/CODPatch-PS3/releases/latest) and read the installation instructions over there.
+After following them, start any COD on a new account and it will just work™.
 
 <br>
 
