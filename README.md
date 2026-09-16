@@ -66,7 +66,7 @@ If libpsutil is setup correctly, you can now build the project by opening the so
 <br>
 
 # Credits
-* [**setsid**](https://github.com/setsid) - For his amazing research in both BO2 and MW3 which helped a ton. His specific BO2 NOP patch is used in this project and works perfectly.
+* [**setsid**](https://github.com/setsid) - For his amazing research in both BO2 and MW3 which helped a ton. His specific BO2 NOP patch is used in this project and works perfectly. **Please check out his project [ps3-tools](https://github.com/setsid/ps3-tools), it is a great resource similar to this project that contains a lot of information related to patches for COD games and other QoS fixes related to the PS3!**
 
 * [**Jacob Schroeder**](https://github.com/jacob-schroeder) - This project wouldn't be what it is now if it wasn't for his initial finding on how DemonWare returns your actual XUID when you authenticate and how to solve it by swapping cache. I had no idea how these engines initially worked and he taught me. Please check out [**IW4Studio**](https://github.com/jacob-schroeder/IW4Studio) and [**IW4-Binaries**](https://github.com/jacob-schroeder/IW4-Binaries)
 
