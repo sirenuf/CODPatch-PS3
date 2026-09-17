@@ -57,7 +57,7 @@ namespace MW3
         };
         const u32 dwFetchPerformanceCompleteSignatureLength = 64; // 0x40 bytes
 
-        const bool EnableProfileLookupDetour = false;
+        const bool EnableProfileLookupDetour = true;
 
         /* bdAuthTicket::m_userID for local client 0, zero until the auth response
          * lands, and local client record 0 + 0x28, which the frame cave corrects from
@@ -292,8 +292,11 @@ namespace MW3
         InstallStub(DwGetOnlineUserIDAddress, mw3_cave_start, "dwGetOnlineUserID");
         InstallStub(FrameAddress, mw3_frame_cave_start, "frame pump");
 
+        #define ARGS 0
+        #define PRIORITY 1059
+        #define STACK_SIZE 8192
         sys_ppu_thread_t watchThreadId;
-        sys_ppu_thread_create(&watchThreadId, UserIdWatch, 0, 1059, 8192,
+        sys_ppu_thread_create(&watchThreadId, UserIdWatch, ARGS, PRIORITY, STACK_SIZE,
             SYS_PPU_THREAD_CREATE_JOINABLE, "CODPatch_MW3UserId");
     }
 }
