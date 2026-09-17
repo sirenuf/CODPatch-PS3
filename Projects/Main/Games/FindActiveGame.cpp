@@ -24,6 +24,7 @@ void FindActiveGame::Initialize()
     MW2::GetGameIDs();
     MW3::GetGameIDs();
     BO1::GetGameIDs();
+    BO2::GetGameIDs();
 
     // Set before the thread exists so it can never read this as false and exit early.
     m_GameProcessThreadRunning = true;
