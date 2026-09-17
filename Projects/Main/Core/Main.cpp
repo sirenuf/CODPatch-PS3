@@ -14,10 +14,14 @@ SYS_MODULE_START(module_start);
 SYS_MODULE_STOP(module_stop);
 #endif
 
+#define ARGS 0
+#define PRIORITY 1059
+#define STACK_SIZE 4096
+
 CDECL_BEGIN
 int module_start(unsigned int args, void* argp)
 {
-    sys_ppu_thread_create(&gVshMenuPpuThreadId, MainThread, 0, 1059, 4096, SYS_PPU_THREAD_CREATE_JOINABLE, "CODPatch_MainThread");
+    sys_ppu_thread_create(&gVshMenuPpuThreadId, MainThread, ARGS, PRIORITY, STACK_SIZE, SYS_PPU_THREAD_CREATE_JOINABLE, "CODPatch_MainThread");
 
     // Exit thread using directly the syscall and not the user mode library or else we will crash
     // System freezes without this.

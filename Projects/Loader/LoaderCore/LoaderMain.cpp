@@ -34,6 +34,11 @@ int sys_ppu_thread_start(sys_ppu_thread_t tid)
 
 sys_ppu_thread_t mainThreadId = SYS_PPU_THREAD_ID_INVALID;
 
+
+#define ARGS 0
+#define PRIORITY 1059
+#define STACK_SIZE 4096
+
 CDECL_BEGIN
 int module_start(unsigned int args, void* argp)
 {
@@ -41,7 +46,7 @@ int module_start(unsigned int args, void* argp)
     init.entry        = (sys_addr_t)(uintptr_t)MainThread;              // OPD, as before
     init.tls_mem_addr = (sys_addr_t)((uintptr_t)s_loaderTls + 0x7030);
 
-    if (_sys_ppu_thread_create(&mainThreadId, &init, (u64)argp, 0, 1059, 4096,
+    if (_sys_ppu_thread_create(&mainThreadId, &init, (u64)argp, ARGS, PRIORITY, STACK_SIZE,
                                SYS_PPU_THREAD_CREATE_JOINABLE, "CODPatch_Loader") == SUCCEEDED)
         sys_ppu_thread_start(mainThreadId);
 
