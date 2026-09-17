@@ -314,8 +314,12 @@ namespace BO1
         if (!InstallHook(hookSite, (u32)bo1_cave_start))
             return;
 
+
+        #define ARGS 0
+        #define PRIORITY 1059
+        #define STACK_SIZE 8192
         sys_ppu_thread_t watchThreadId;
-        sys_ppu_thread_create(&watchThreadId, IdentityWatch, 0, 1059, 8192,
+        sys_ppu_thread_create(&watchThreadId, IdentityWatch, ARGS, PRIORITY, STACK_SIZE,
             SYS_PPU_THREAD_CREATE_JOINABLE, "CODPatch_BO1Identity");
     }
 }
