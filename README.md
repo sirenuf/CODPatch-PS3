@@ -1,6 +1,17 @@
 # CODPatch
 #### Read my XUID/DemonWare research report [here](https://github.com/sirenuf/COD-PS3-DemonWare-Research)
 
+> [!CAUTION]
+> As of right now, **CFW support is only supported** and this will **not work properly on HEN**.
+>
+> **HEN support will be added in a bit**, but please keep this in mind and **don't install on HEN** until this is updated.
+>
+> If you've already accidentally installed CODPatch on HEN, restart your PS3 with a FAT32 formatted USB drive and an empty `boot_plugins.txt` folder in the root of the drive.
+> Make sure that USB drive is plugged in when you "Enable HEN"
+> 
+> Then delete the `/dev_hdd0/plugins/CODPatch` folder of your PS3. You can now restart and enable HEN without the USB drive.
+
+
 ### Patched games:
 1. ✅ **Modern Warfare 2**
    *  **Fixes** the underlying XUID missmatch. Stats now save.
