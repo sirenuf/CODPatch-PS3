@@ -57,11 +57,6 @@ namespace MW2
 			return;
 		}
 
-		/* TODO: confirm this is the multiplayer executable before writing. The
-		 * Loader is injected into EBOOT.BIN and default.self as well, where
-		 * HookAddress holds something else entirely. Reading the word at
-		 * HookAddress and requiring 0x80010098 is enough. */
-
 		const u32 bodySize = (u32)mw2_cave_end - (u32)mw2_cave_start;
 		const u32 tailAddress = CaveAddress + bodySize;
 
