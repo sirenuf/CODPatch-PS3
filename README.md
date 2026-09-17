@@ -10,6 +10,8 @@
 > Make sure that USB drive is plugged in when you "Enable HEN"
 > 
 > Then delete the `/dev_hdd0/plugins/CODPatch` folder of your PS3. You can now restart and enable HEN without the USB drive.
+>
+> **Once HEN support has been added and fully verified and tested, this caution is getting removed. You will then be able to run CODPatch flawlessly on HEN.**
 
 
 ### Patched games:
@@ -37,8 +39,28 @@
 <br>
 
 # Install
-**Download** the zip file from the **Releases page** [here](https://github.com/sirenuf/CODPatch-PS3/releases/latest) and read the installation instructions over there.
-After following them, start any COD on a new account and it will just work™.
+**Download** the latest .7z release of CODPatch [**here**](https://github.com/sirenuf/CODPatch-PS3/releases/latest/download/CODPatch.7z).
+
+<br>
+
+* **Install** by dragging the `CODPatch` folder inside the archive into the `/dev_hdd0/plugins` folder off your PS3.
+
+<br>
+
+Afterwards, the file locations should look like this:
+* `/dev_hdd0/plugins/CODPatch/CODPatch.sprx`
+* `/dev_hdd0/plugins/CODPatch/Modules/Loader.sprx`
+
+<br>
+
+**Then add** the line `/dev_hdd0/plugins/CODPatch/CODPatch.sprx` in your `/dev_hdd0/boot_plugins.txt` file and **reboot** your Playstation 3.
+
+<br>
+
+**After this** CODPatch will **start** and run in the background automatically on every boot, and fix all of the targetted CODs when you start them, automatically.
+
+No static patching or binary redistribution required.
+
 
 <br>
 
