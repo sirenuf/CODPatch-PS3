@@ -1,13 +1,5 @@
 #include "MW2.hpp"
 
-#include <set>
-
-#include "Utils/SystemCalls.hpp"
-#include "Games/FindActiveGame.hpp"
-#include "Games/Common.hpp"
-
-#include <libpsutil.h>
-
 namespace MW2
 {
 	namespace {

@@ -2,9 +2,9 @@
 
 #include <set>
 
+#include <libpsutil.h>
+
 namespace MW2
 {
-	void Run();
-
 	const std::set<std::string>& GetGameIDs();
 }
