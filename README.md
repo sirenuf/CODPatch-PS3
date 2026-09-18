@@ -15,18 +15,18 @@
 
 
 ### Patched games:
-1. ✅ **Modern Warfare 2**
-   *  **Fixes** the underlying XUID missmatch. Stats now save.
+* **Modern Warfare 2**
+   * ✅ **Fixes** the underlying XUID missmatch. Stats now save.
 
-2. ✅ **Modern Warfare 3**
-   * **Fixes** the underlying XUID missmatch. Stats save like usual and you can play the game like normal. This will also not crash other’s games anymore if the host is an unpatched client with an old account.
-   * **Fixes** unpatched player's of new accounts to also join your server and not crash it.
+* **Modern Warfare 3**
+   * ✅ **Fixes** the underlying XUID missmatch. Stats save like usual and you can play the game like normal. This will also not crash other’s games anymore if the host is an unpatched client with an old account.
+   * ✅ **Fixes** unpatched players of new accounts crashing and getting kicked from your server when joining it.
 
-4. ✅ **Black Ops 1**
-   * **Fixes** the underlying XUID missmatch. Stats now save.
+* **Black Ops 1**
+   * ✅ **Fixes** the underlying XUID missmatch. Stats now save.
 
-5. ✅ **Black Ops 2**
-   * **Fixes** crashing if you're logged in on PSN while starting the game.
+* **Black Ops 2**
+   * ✅ **Fixes** crashing if you're logged in on PSN while starting the game.
 
   
 ### 🔜 Soon™:
