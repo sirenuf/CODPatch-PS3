@@ -1,7 +1,7 @@
 #include "StartHandler.hpp"
 #include "Games/FindActiveGame.hpp"
 
-#define CP_VERSION "1.0"
+#define CP_VERSION "v1.0.2-beta"
 
 sys_ppu_thread_t gVshMenuPpuThreadId = SYS_PPU_THREAD_ID_INVALID;
 
